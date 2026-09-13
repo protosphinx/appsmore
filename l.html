@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Your apps - appsmore</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <a class="brand" href="./">
+      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect x="2" y="2" width="24" height="24" rx="7" fill="#2a5bd7"/><path d="M8 14.5l4 4 8-9" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      appsmore
+    </a>
+    <nav><a href="./">Make your own list</a></nav>
+  </div>
+</header>
+
+<main class="list">
+  <h1 id="title">Your apps</h1>
+  <p class="sub" id="sub"></p>
+  <div class="progress"><i id="prog"></i></div>
+  <div class="notice" id="notice" hidden>
+    Open this page on your iPhone - each <b>Get</b> button jumps straight to the app in the App Store. Tap Get, install, swipe back here, next one.
+  </div>
+  <div id="rows"></div>
+  <div class="actions">
+    <button class="btn secondary small" id="reset" hidden>Reset progress</button>
+    <button class="btn secondary small" id="share">Share this list</button>
+  </div>
+  <p class="sub" id="empty" hidden>This link has no apps in it. <a href="./">Pick some.</a></p>
+</main>
+
+<footer>Links open Apple's App Store. Nothing is installed by this page itself - iPhones don't allow that, and that's fine.</footer>
+
+<script src="apps.js"></script>
+<script src="common.js"></script>
+<script>
+(async function () {
+  const $ = (s) => document.querySelector(s);
+  const ids = AM.decodeList(location.hash.slice(1) || new URLSearchParams(location.search).get('a'));
+  const key = 'am.done.' + AM.encodeList(ids);
+  let done = new Set();
+  try { done = new Set(JSON.parse(localStorage.getItem(key) || '[]')); } catch (e) {}
+
+  const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  $('#notice').hidden = isIOS;
+
+  if (!ids.length) { $('#empty').hidden = false; $('#share').hidden = true; return; }
+  await AM.loadIcons();
+
+  const rowsEl = $('#rows');
+  const rows = new Map();
+  function build() {
+    rowsEl.innerHTML = '';
+    for (const id of ids) {
+      const app = AM.appFor(id);
+      const row = document.createElement('div');
+      row.className = 'row' + (done.has(id) ? ' done' : '');
+      row.append(AM.iconEl(app, 'ic'));
+      const txt = document.createElement('div'); txt.className = 'txt';
+      const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = app.name;
+      const by = document.createElement('div'); by.className = 'by'; by.textContent = AM.sellerFor(id);
+      txt.append(nm, by);
+      const get = document.createElement('a');
+      get.className = 'get'; get.href = AM.STORE_URL(id); get.textContent = done.has(id) ? 'Done' : 'Get';
+      get.target = '_blank'; get.rel = 'noopener';
+      get.addEventListener('click', () => { done.add(id); save(); row.classList.add('done'); get.textContent = 'Done'; });
+      row.append(txt, get);
+      rowsEl.append(row);
+      rows.set(id, row);
+    }
+    progress();
+  }
+  function save() { try { localStorage.setItem(key, JSON.stringify([...done])); } catch (e) {} }
+  function progress() {
+    const n = ids.length, d = [...done].filter((x) => ids.includes(x)).length;
+    $('#title').textContent = n === 1 ? '1 app' : `${n} apps`;
+    $('#sub').textContent = d ? (d === n ? 'All done.' : `${d} of ${n} done`) : 'Tap Get on each one.';
+    $('#prog').style.width = (100 * d / n) + '%';
+    $('#reset').hidden = !d;
+  }
+  build();
+  AM.hydrate(ids, build);
+
+  $('#reset').addEventListener('click', () => { done.clear(); save(); build(); });
+  $('#share').addEventListener('click', async () => {
+    const data = { title: 'My iPhone apps', text: `${ids.length} apps to install`, url: location.href };
+    if (navigator.share) { try { await navigator.share(data); } catch (e) {} }
+    else { try { await navigator.clipboard.writeText(location.href); $('#share').textContent = 'Link copied'; } catch (e) {} }
+  });
+})();
+</script>
+</body>
+</html>
