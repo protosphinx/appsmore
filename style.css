@@ -145,7 +145,7 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
    right, the gap sits on the crease. */
 @media (min-width: 890px) {
   .panes { display: grid; grid-template-columns: 1fr 1fr; column-gap: 40px; align-items: start; }
-  .mine { margin-top: 0; position: sticky; top: 14px; max-height: calc(100vh - 28px); overflow: auto; }
+  .mine { margin-top: 22px; position: sticky; top: 14px; max-height: calc(100vh - 28px); overflow: auto; }
   .bar { display: none !important; }
 }
 /* laptops and up */
@@ -153,7 +153,9 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
   .title { font-size: 52px; margin-top: 40px; }
   .lede { font-size: 18px; }
   .meta { margin-bottom: 30px; }
-  .panes { grid-template-columns: minmax(0, 1fr) 400px; column-gap: 48px; }
+  .panes { grid-template-columns: minmax(0, 1fr) 420px; column-gap: 56px; }
+  .mine { margin-top: 40px; padding: 18px 20px 20px; }
+  .qr svg { width: 150px; height: 150px; }
   .tiles { gap: 20px 12px; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
   .tile .ico, .tile .ico .ic { width: 72px; height: 72px; border-radius: 17px; }
   .cat h2 { font-size: 19px; }
