@@ -40,8 +40,10 @@ so search engines can find it.
   apps" 150, "new iphone setup" 150 (TP 7k), "iphone duo" 100 pre-launch;
   the SERP is Reddit threads and DR 14-58 blogs, so a real page can rank.
   Domain: DR 0; its 374 referring domains are nofollow link-shop spam
-  (harmless, nothing to disavow). Not yet done: Google Search Console
-  verification (needs the owner's Google account), gzip on build.host.
+  (harmless, nothing to disavow). Search Console: domain property verified
+  by the owner, sitemap submitted, homepage indexing requested (2026-09-14).
+  Favicon set replaced (was 404 on /favicon.ico, Google showed a cached
+  WordPress icon). Not yet done: gzip on build.host.
 - v0.5 substance plumbing: `apps.js` lines take an optional "why" sentence
   (shown in lists) and tags; `SETUP_ORDER` sorts every list into install
   order (passwords first); `icons.json` now bakes size, last update, ratings,
@@ -94,8 +96,9 @@ so search engines can find it.
 
 ## Next up
 
-- Search Console: owner adds the `appsmore.com` domain property, sends the
-  TXT token; add it at Cloudflare, then submit the sitemap.
+- Watch Search Console (verified 2026-09-14; sitemap submitted and homepage
+  indexing requested the same day): first Performance/Indexing data in a
+  day or two; confirm the favicon flips from the old WordPress "W".
 - Ask build.host to enable gzip/brotli (responses currently uncompressed).
 
 - Wire push-to-deploy: add `protosphinx/appsmore` to the Build Host GitHub
