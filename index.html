@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://appsmore.com/">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#2a5bd7">
-<link rel="stylesheet" href="style.css?v=3">
+<link rel="stylesheet" href="style.css?v=4">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebSite","name":"appsmore","url":"https://appsmore.com/","description":"A short, hand-picked list of iPhone apps worth installing, laid out for the iPhone Duo."}
@@ -30,11 +30,12 @@
 </header>
 
 <main class="wrap">
-  <h1 class="title">The good iPhone apps, hand-picked.</h1>
-  <p class="lede">Kept short on purpose. Built for the iPhone Duo. Tick what you want, then install from your list, or send it to a phone as one link.</p>
+  <h1 class="title">The good iPhone apps. Hand-picked.</h1>
+  <p class="lede">Kept short on purpose. Built for the iPhone Duo. Tap the ones you want, then install from your list, or send it to a phone as one link.</p>
+  <p class="meta" id="catalog-note"></p>
 
   <div class="panes">
-    <section class="catalog" id="grid" aria-label="Apps"></section>
+    <section class="catalog" id="grid" aria-label="Apps by category"></section>
 
     <aside class="mine" id="mine">
       <div class="mine-head">
@@ -42,7 +43,7 @@
         <span class="count" id="count"></span>
         <button class="link" id="clear" hidden>Clear</button>
       </div>
-      <p class="empty" id="empty">Nothing picked yet. Tick apps and they show up here, each with a Get button. Install from this phone, or send the list to another one.</p>
+      <p class="empty" id="empty">Nothing picked yet. Tap icons and they show up here, each with a Get button. Install from this phone, or send the list to another one.</p>
       <div id="rows"></div>
       <div class="share" id="share" hidden>
         <div class="urlbox">
@@ -65,8 +66,8 @@
   appsmore is a personal list, not a store. App names and icons belong to their developers; links go to Apple's App Store.
 </footer>
 
-<script src="apps.js?v=3"></script>
-<script src="common.js?v=3"></script>
+<script src="apps.js?v=4"></script>
+<script src="common.js?v=4"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
 (async function () {
@@ -81,30 +82,37 @@
 
   await AM.loadIcons();
 
-  // The catalog: one checkbox row per app, categories flow into columns.
+  $('#catalog-note').textContent = `${AM.ordered.length} apps, ${CATEGORIES.length} categories, every one picked by a person.`;
+
+  // The catalog: a home-screen grid per category. Tap an icon to pick it.
   const boxes = new Map();
   for (const [cat, apps] of CATEGORIES) {
     const sec = document.createElement('section');
     sec.className = 'cat';
     const h = document.createElement('h3'); h.textContent = cat; sec.append(h);
+    const tiles = document.createElement('div'); tiles.className = 'tiles';
     for (const [id, name] of apps) {
       const app = AM.byId.get(id);
       const label = document.createElement('label');
-      label.className = 'app';
+      label.className = 'tile';
       const cb = document.createElement('input');
       cb.type = 'checkbox'; cb.checked = selected.has(id);
+      cb.setAttribute('aria-label', name);
       cb.addEventListener('change', () => { cb.checked ? selected.add(id) : selected.delete(id); update(); });
+      const ico = document.createElement('span'); ico.className = 'ico';
+      ico.append(AM.iconEl(app, 'ic', 256));
       const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = name;
-      label.append(cb, AM.iconEl(app, 'ic'), nm);
-      sec.append(label);
+      label.append(cb, ico, nm);
+      tiles.append(label);
       boxes.set(id, { cb, label });
     }
+    sec.append(tiles);
     grid.append(sec);
   }
   AM.hydrate(AM.ordered.map((a) => a.id), () => {
     for (const [id, { label }] of boxes) {
       const cur = label.querySelector('.ic');
-      if (cur.classList.contains('letter') && AM.iconFor(id)) cur.replaceWith(AM.iconEl(AM.byId.get(id), 'ic'));
+      if (cur.classList.contains('letter') && AM.iconFor(id)) cur.replaceWith(AM.iconEl(AM.byId.get(id), 'ic', 256));
     }
     renderList();
   });

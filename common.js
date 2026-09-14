@@ -27,7 +27,7 @@
   async function loadIcons() {
     if (iconMeta) return iconMeta;
     try {
-      const r = await fetch('icons.json?v=3', { cache: 'force-cache' });
+      const r = await fetch('icons.json?v=4', { cache: 'force-cache' });
       iconMeta = await r.json();
     } catch (e) {
       iconMeta = { base: '', suffix: '', icons: {}, sellers: {} };
@@ -35,12 +35,13 @@
     return iconMeta;
   }
 
-  function iconFor(id) {
+  // Apple's artwork URLs end in /<w>x<h>bb.jpg; ask for the size we draw at.
+  function iconFor(id, px) {
     const m = iconMeta || { icons: {}, base: '', suffix: '' };
     const p = m.icons[id];
-    if (p) return m.base + p + m.suffix;
-    if (cache[id] && cache[id].icon) return cache[id].icon;
-    return null;
+    let url = p ? m.base + p + m.suffix : (cache[id] && cache[id].icon) || null;
+    if (url && px) url = url.replace(/\/\d+x\d+bb\./, `/${px}x${px}bb.`);
+    return url;
   }
   function sellerFor(id) {
     const m = iconMeta || { sellers: {} };
@@ -67,8 +68,8 @@
   }
 
   // <img> or letter-avatar for an app.
-  function iconEl(app, cls) {
-    const src = iconFor(app.id);
+  function iconEl(app, cls, px) {
+    const src = iconFor(app.id, px);
     if (src) {
       const img = document.createElement('img');
       img.className = cls; img.alt = ''; img.loading = 'lazy'; img.src = src;
@@ -92,7 +93,7 @@
     o = o || {};
     const row = document.createElement('div');
     row.className = 'row' + (o.done ? ' done' : '');
-    row.append(iconEl(app, 'ic'));
+    row.append(iconEl(app, 'ic', 128));
     const txt = document.createElement('div'); txt.className = 'txt';
     const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = app.name;
     const by = document.createElement('div'); by.className = 'by'; by.textContent = sellerFor(app.id);
