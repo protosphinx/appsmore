@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="appsmore: hand-picked iPhone apps, built for the iPhone Duo">
 <meta name="twitter:image" content="https://appsmore.com/og.png">
 <meta name="theme-color" content="#0b0b0f">
-<link rel="stylesheet" href="style.css?v=16">
+<link rel="stylesheet" href="style.css?v=17">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -177,7 +177,6 @@
         <div class="qr" id="qr"></div>
         <div class="copyrow">
           <button class="btn" id="copy">Copy link</button>
-          <button class="btn secondary" id="shorten" hidden>Short link</button>
           <p class="hint" id="hint">Scan on the new phone, or text it the link. The whole list is in the link; nothing is stored anywhere.</p>
         </div>
       </div>
@@ -196,8 +195,8 @@
   appsmore is a personal list, not a store. Made by <a href="https://x.com/protosphinx" rel="me noopener">@protosphinx</a> on NEO. App names and icons belong to their developers; links go to Apple's App Store.
 </footer>
 
-<script src="apps.js?v=16"></script>
-<script src="common.js?v=16"></script>
+<script src="apps.js?v=17"></script>
+<script src="common.js?v=17"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
 (async function () {
@@ -317,14 +316,25 @@
       }));
     }
     const url = n ? AM.listUrl(list) : location.href.replace(/[?#].*$/, '');
-    showLink(url);
-    $('#shorten').hidden = !n;
-    $('#shorten').textContent = 'Short link';
+    showLink(url, n ? 'long' : 'site');
+    if (n) shortenSoon(list);
   }
 
-  function showLink(url) {
-    $('#url').textContent = url.replace(/^https?:\/\//, '');
-    $('#url').href = url;
+  // kind: 'site' (nothing picked), 'long' (list.html#a.b.c), 'short' (appsmore.com/phrase)
+  let longUrl = '';
+  function showLink(url, kind) {
+    const el = $('#url');
+    // zero-width spaces after the dots so a long link wraps between apps, not mid-word
+    el.textContent = url.replace(/^https?:\/\//, '').replace(/\./g, '.\u200b');
+    el.href = url;
+    const hint = $('#hint'); hint.innerHTML = '';
+    if (kind === 'site') hint.textContent = 'Pick apps and this becomes a link to your list. Scan it on the new phone, or text it over.';
+    else if (kind === 'long') { longUrl = url; hint.textContent = 'Scan on the new phone, or text it the link. The whole list is in the link.'; }
+    else {
+      hint.append(document.createTextNode('Lasts a year from its last use. Prefer the '));
+      const a = document.createElement('a'); a.href = '#'; a.textContent = 'long link'; a.addEventListener('click', (e) => { e.preventDefault(); shortFor.set(AM.encodeList(ids()), null); showLink(longUrl, 'long'); });
+      hint.append(a, document.createTextNode(' that never expires?'));
+    }
     const qr = $('#qr'); qr.innerHTML = '';
     if (window.qrcode) {
       try { const q = qrcode(0, 'M'); q.addData(url); q.make(); qr.innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); }
@@ -333,20 +343,26 @@
     qr.hidden = !qr.firstChild;
   }
 
-  // Short link: appsmore.com/tigereatsapple, minted by the Cloudflare Worker.
-  // The same list always gets the same phrase. Lives a year from last use;
-  // the long link above never expires.
-  $('#shorten').addEventListener('click', async () => {
-    const b = $('#shorten'); b.textContent = 'One sec';
-    try {
-      const r = await fetch('/api/short', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ list: AM.encodeList(ids()) }) });
-      const j = await r.json();
-      if (!r.ok || !j.url) throw new Error(j.error || r.status);
-      showLink(j.url);
-      $('#hint').textContent = 'Short links last a year from their last use. The long link never expires.';
-      b.hidden = true;
-    } catch (e) { b.textContent = 'No short link right now'; setTimeout(() => (b.textContent = 'Short link'), 2500); }
-  });
+  // Short link: appsmore.com/tigereatsapple, minted by the Cloudflare Worker
+  // once the list has settled for a second. Same list, same phrase. If the
+  // Worker isn't reachable (local dev, outage) the long link simply stays.
+  const shortFor = new Map();   // encoded list -> short url
+  let shortTimer = 0;
+  function shortenSoon(list) {
+    const key = AM.encodeList(list);
+    clearTimeout(shortTimer);
+    if (shortFor.get(key) === null) return;                  // user chose the long link for this list
+    if (shortFor.has(key)) { showLink(shortFor.get(key), 'short'); return; }
+    shortTimer = setTimeout(async () => {
+      try {
+        const r = await fetch('/api/short', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ list: key }) });
+        const j = await r.json();
+        if (!r.ok || !j.url) return;
+        shortFor.set(key, j.url);
+        if (AM.encodeList(ids()) === key) showLink(j.url, 'short');   // still the same list?
+      } catch (e) { /* long link stays */ }
+    }, 1000);
+  }
 
   $('#copy').addEventListener('click', async () => {
     const b = $('#copy'), url = $('#url').href;

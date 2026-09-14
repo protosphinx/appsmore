@@ -35,11 +35,11 @@ export default {
       const list = String(body.list || '').toLowerCase();
       if (!LIST.test(list)) return json({ error: 'bad list' }, 400);
 
-      // Light rate limit: 30 new links per IP per hour.
+      // Light rate limit: 120 new links per IP per hour (the page mints as you pick).
       const ip = request.headers.get('cf-connecting-ip') || 'x';
       const rk = 'r:' + (await sha(ip)).slice(0, 16) + ':' + Math.floor(Date.now() / 3600e3);
       const n = Number((await env.LINKS.get(rk)) || 0);
-      if (n >= 30) return json({ error: 'slow down' }, 429);
+      if (n >= 120) return json({ error: 'slow down' }, 429);
 
       const hk = 'h:' + (await sha(list));
       let p = await env.LINKS.get(hk);
