@@ -2,6 +2,8 @@
 // Format: [App Store id, "Display name"]. The id is the number after /id in the App Store URL.
 // Icons are looked up automatically (icons.json, then the App Store API). Delete freely.
 // Order here is order on the page. v0.1: the obvious picks, to be pruned by hand.
+// Optional third field, tags, e.g. [id, "Name", ["duo"]] once an app has been
+// tried on an iPhone Duo and uses the inner display properly. None yet.
 
 const CATEGORIES = [
   ["Messaging", [

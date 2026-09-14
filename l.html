@@ -10,12 +10,9 @@
 </head>
 <body>
 
-<header>
+<header class="top">
   <div class="wrap">
-    <a class="brand" href="./">
-      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect x="2" y="2" width="24" height="24" rx="7" fill="#2a5bd7"/><path d="M8 14.5l4 4 8-9" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      appsmore
-    </a>
+    <a class="brand" href="./">appsmore</a>
     <nav><a href="./">Make your own list</a></nav>
   </div>
 </header>
@@ -25,17 +22,17 @@
   <p class="sub" id="sub"></p>
   <div class="progress"><i id="prog"></i></div>
   <div class="notice" id="notice" hidden>
-    Open this page on your iPhone - each <b>Get</b> button jumps straight to the app in the App Store. Tap Get, install, swipe back here, next one.
+    Open this on your iPhone. Each <b>Get</b> button jumps straight to the app in the App Store: tap Get, install, swipe back here, next one.
   </div>
   <div id="rows"></div>
   <div class="actions">
-    <button class="btn secondary small" id="reset" hidden>Reset progress</button>
-    <button class="btn secondary small" id="share">Share this list</button>
+    <button class="btn secondary" id="reset" hidden>Reset progress</button>
+    <button class="btn secondary" id="share">Share this list</button>
   </div>
   <p class="sub" id="empty" hidden>This link has no apps in it. <a href="./">Pick some.</a></p>
 </main>
 
-<footer>Links open Apple's App Store. Nothing is installed by this page itself - iPhones don't allow that, and that's fine.</footer>
+<footer>Links open Apple's App Store. Nothing is installed by this page itself; iPhones don't allow that, and that's fine.</footer>
 
 <script src="apps.js"></script>
 <script src="common.js"></script>
@@ -54,25 +51,13 @@
   await AM.loadIcons();
 
   const rowsEl = $('#rows');
-  const rows = new Map();
   function build() {
     rowsEl.innerHTML = '';
     for (const id of ids) {
-      const app = AM.appFor(id);
-      const row = document.createElement('div');
-      row.className = 'row' + (done.has(id) ? ' done' : '');
-      row.append(AM.iconEl(app, 'ic'));
-      const txt = document.createElement('div'); txt.className = 'txt';
-      const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = app.name;
-      const by = document.createElement('div'); by.className = 'by'; by.textContent = AM.sellerFor(id);
-      txt.append(nm, by);
-      const get = document.createElement('a');
-      get.className = 'get'; get.href = AM.STORE_URL(id); get.textContent = done.has(id) ? 'Done' : 'Get';
-      get.target = '_blank'; get.rel = 'noopener';
-      get.addEventListener('click', () => { done.add(id); save(); row.classList.add('done'); get.textContent = 'Done'; });
-      row.append(txt, get);
-      rowsEl.append(row);
-      rows.set(id, row);
+      rowsEl.append(AM.rowEl(AM.appFor(id), {
+        done: done.has(id),
+        onGet: () => { done.add(id); save(); progress(); },
+      }));
     }
     progress();
   }

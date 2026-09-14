@@ -1,11 +1,13 @@
 # appsmore - status
 
-**Current state (2026-09-13):** v0.1, live at https://appsmore.build.host.
-Static site, no backend. Picker page + shareable list page + about page.
-Catalog is a first real cut: 67 obvious picks in 12 categories, chosen for
-restraint rather than coverage, and meant to be pruned by hand from here.
-appsmore.com is being pointed at it (DNS on Cloudflare, mail stays on Google
-Workspace).
+**Current state (2026-09-13):** v0.2, live at https://appsmore.build.host.
+Static site, no backend. One picker page laid out for the iPhone Duo's two
+screens, a shareable list page, an about page. Catalog is a first real cut:
+67 obvious picks in 12 categories, chosen for restraint rather than coverage,
+and meant to be pruned by hand from here. appsmore.com points at the server
+but its TLS is blocked by a build.host platform bug (see Hosting). Public
+launch is after the Duo ships (Oct 23, 2026); the site is online now so
+search engines can find it.
 
 ## Hosting
 
@@ -17,9 +19,26 @@ Workspace).
   `POST https://build.host/api/projects/<uuid>/deploy` with the account key.
 - Domain: `appsmore.com` + `www` attached to the project; Cloudflare `A`
   record to the server, proxy off, so build.host can issue its own TLS.
+  Blocked: build.host's port-80 nginx sends unknown hosts to its marketing
+  site, so Let's Encrypt HTTP-01 for custom domains can never validate.
+  HTTPS routing on 443 is correct (site serves with a placeholder cert).
+  Fix belongs in erphq/build-host (proxy `/.well-known/acme-challenge/` for
+  all hosts to Traefik, or give Traefik port 80). Interim option: Cloudflare
+  proxy on with SSL mode Full + Always Use HTTPS.
+- Mail on the domain is Google Workspace (5 MX + SPF TXT); never touch those.
 
 ## Just shipped
 
+- v0.2 design: Ninite-plain and Duo-first. No hero, no steps, no filter; one
+  sentence then the list. Breakpoints are the Duo's CSS viewports: 466 closed
+  (2 columns), 626 open portrait (3 columns), 890 open landscape (catalog on
+  the left half, "Your list" with Get buttons on the right, 40px gap on the
+  crease). Get works on-device without a link; the link + QR remain for
+  setting up another phone. Sticky "Your list" bar on phone widths only.
+- `apps.js` accepts an optional third field, tags (e.g. `["duo"]`), for apps
+  verified on a Duo. None set yet; the claim stays off the page until true.
+- SEO plumbing: title/description/canonical/OG, WebSite JSON-LD, robots.txt,
+  sitemap.xml. `l.html` stays noindex.
 - Repo created and pushed; first deploy to build.host (12 s build, all nine
   files served, Let's Encrypt cert on `appsmore.build.host`).
 
@@ -43,9 +62,14 @@ Workspace).
 
 ## Next up
 
+- Get HTTPS on appsmore.com: fix the build.host ACME passthrough, or put the
+  Cloudflare proxy in front (Full + Always Use HTTPS) until it is fixed.
+- Wire push-to-deploy: add `protosphinx/appsmore` to the Build Host GitHub
+  App installation, then set `is_auto_deploy_enabled`.
 - Prune the v0.1 catalog by hand; drop any category that doesn't earn its
   place.
-- Deploy (GitHub Pages or Cloudflare Pages) and point appsmore.com at it.
+- After Oct 23: try apps on a Duo, tag the ones that use the inner display
+  (`["duo"]`), then say so on the page.
 - One-line "why" per app, shown on hover / on the list page.
 - Test the `Get` flow on a physical iPhone (universal link should open the
   App Store app directly; confirm swipe-back returns to Safari).

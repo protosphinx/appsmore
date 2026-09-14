@@ -9,8 +9,8 @@
   const ordered = [];
   if (typeof CATEGORIES !== 'undefined') {
     for (const [cat, apps] of CATEGORIES) {
-      for (const [id, name] of apps) {
-        const a = { id, name, cat };
+      for (const [id, name, tags] of apps) {
+        const a = { id, name, cat, tags: tags || [] };
         byId.set(id, a);
         ordered.push(a);
       }
@@ -86,6 +86,33 @@
   }
   function hue(id) { return `hsl(${(Number(id) * 7) % 360} 45% 55%)`; }
 
+  // One row of a list: icon, name, developer, Get. Get opens the App Store
+  // page (the App Store app itself on an iPhone) and marks the row done.
+  function rowEl(app, o) {
+    o = o || {};
+    const row = document.createElement('div');
+    row.className = 'row' + (o.done ? ' done' : '');
+    row.append(iconEl(app, 'ic'));
+    const txt = document.createElement('div'); txt.className = 'txt';
+    const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = app.name;
+    const by = document.createElement('div'); by.className = 'by'; by.textContent = sellerFor(app.id);
+    txt.append(nm, by);
+    row.append(txt);
+    if (o.onRemove) {
+      const x = document.createElement('button');
+      x.type = 'button'; x.className = 'rm'; x.textContent = '\u00d7';
+      x.setAttribute('aria-label', 'Remove ' + app.name);
+      x.addEventListener('click', o.onRemove);
+      row.append(x);
+    }
+    const get = document.createElement('a');
+    get.className = 'get'; get.href = STORE_URL(app.id); get.target = '_blank'; get.rel = 'noopener';
+    get.textContent = o.done ? 'Done' : 'Get';
+    get.addEventListener('click', () => { row.classList.add('done'); get.textContent = 'Done'; if (o.onGet) o.onGet(); });
+    row.append(get);
+    return row;
+  }
+
   // ---- list encoding -----------------------------------------------------
   // l.html#<id36>.<id36>... - short, stateless, nothing to host but static files.
   function encodeList(ids) { return ids.map((n) => Number(n).toString(36)).join('.'); }
@@ -100,5 +127,5 @@
     return byId.get(id) || { id, name: (cache[id] && cache[id].name) || `App ${id}`, cat: '' };
   }
 
-  window.AM = { STORE_URL, byId, ordered, loadIcons, iconFor, sellerFor, hydrate, iconEl, encodeList, decodeList, listUrl, appFor };
+  window.AM = { STORE_URL, byId, ordered, loadIcons, iconFor, sellerFor, hydrate, iconEl, rowEl, encodeList, decodeList, listUrl, appFor };
 })();

@@ -2,20 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>appsmore - the good iPhone apps, hand-picked</title>
-<meta name="description" content="A short, hand-picked list of iPhone apps worth installing. Tick the ones you want, get one link, install them all on your phone.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>appsmore: hand-picked iPhone apps, built for the iPhone Duo</title>
+<meta name="description" content="A short, hand-picked list of iPhone apps worth installing, laid out for the iPhone Duo's two screens. Tick what you want, install from the list, or send it to a phone as one link.">
+<link rel="canonical" href="https://appsmore.com/">
+<meta property="og:title" content="appsmore: hand-picked iPhone apps, built for the iPhone Duo">
+<meta property="og:description" content="A short, hand-picked list of iPhone apps worth installing. Tick what you want, install from the list, or send it to a phone as one link.">
+<meta property="og:url" content="https://appsmore.com/">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#2a5bd7">
 <link rel="stylesheet" href="style.css">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","name":"appsmore","url":"https://appsmore.com/","description":"A short, hand-picked list of iPhone apps worth installing, laid out for the iPhone Duo."}
+</script>
 </head>
 <body>
 
-<header>
+<header class="top">
   <div class="wrap">
-    <a class="brand" href="./">
-      <svg viewBox="0 0 28 28" fill="none" aria-hidden="true"><rect x="2" y="2" width="24" height="24" rx="7" fill="#2a5bd7"/><path d="M8 14.5l4 4 8-9" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      appsmore
-    </a>
+    <a class="brand" href="./">appsmore</a>
     <nav>
       <a href="about.html">About</a>
       <a href="https://github.com/protosphinx/appsmore">GitHub</a>
@@ -23,55 +29,35 @@
   </div>
 </header>
 
-<section class="hero">
-  <div class="wrap cols">
-    <div>
-      <h1>The good iPhone apps. Hand-picked.</h1>
-      <p>No top-100 charts, no sponsored junk. A short list of apps that are actually worth a home-screen slot. Tick the ones you want and get one link for your phone. Handy when you're setting up a fresh iPhone, the new iPhone Duo included.</p>
-    </div>
-    <div class="how">
-      <h2>How it works</h2>
-      <ol>
-        <li>Pick apps below.</li>
-        <li>Get a link (or scan the QR code).</li>
-        <li>Open it on your iPhone and tap <b>Get</b> next to each one - it drops you straight into the App Store.</li>
-      </ol>
-    </div>
-  </div>
-</section>
-
 <main class="wrap">
-  <h2 class="step">1. Pick the apps you want <small id="catalog-note"></small></h2>
-  <div class="toolbar">
-    <input type="search" id="q" placeholder="Filter apps..." autocomplete="off">
-    <button class="link" id="clear" hidden>Clear selection</button>
+  <p class="lede">Hand-picked iPhone apps, kept short. Built for the iPhone Duo. Tick what you want, then install from your list, or send it to a phone as one link.</p>
+
+  <div class="panes">
+    <section class="catalog" id="grid" aria-label="Apps"></section>
+
+    <aside class="mine" id="mine">
+      <div class="mine-head">
+        <h2>Your list</h2>
+        <span class="count" id="count"></span>
+        <button class="link" id="clear" hidden>Clear</button>
+      </div>
+      <p class="empty" id="empty">Nothing picked yet.</p>
+      <div id="rows"></div>
+      <div class="share" id="share" hidden>
+        <div class="urlbox">
+          <input type="text" id="url" readonly aria-label="Link to this list">
+          <button class="btn" id="copy">Copy</button>
+        </div>
+        <div class="qr" id="qr"></div>
+        <p class="hint">Setting up a different phone? Text it this link, AirDrop it, or scan the code. The whole list is in the link; nothing is stored anywhere.</p>
+      </div>
+    </aside>
   </div>
-  <div class="grid" id="grid"></div>
 </main>
 
-<div class="bar" id="bar">
-  <div class="wrap">
-    <span class="count" id="count">Nothing picked yet</span>
-    <button class="btn" id="go" disabled>Get your list</button>
-  </div>
-</div>
-
-<div class="wrap">
-  <section class="result" id="result" hidden>
-    <h2>2. Open this on your iPhone</h2>
-    <div class="cols">
-      <div>
-        <div class="chip-row" id="chips"></div>
-        <div class="urlbox">
-          <input type="text" id="url" readonly>
-          <button class="btn small" id="copy">Copy</button>
-        </div>
-        <p class="hint">Text it to yourself, AirDrop it, or scan the code. The link contains the whole list - nothing is stored anywhere.</p>
-        <a class="btn secondary small" id="open" href="#">Open the list here</a>
-      </div>
-      <div class="qr" id="qr"></div>
-    </div>
-  </section>
+<div class="bar" id="bar" hidden>
+  <span id="barcount"></span>
+  <a class="btn" href="#mine">Your list</a>
 </div>
 
 <footer>
@@ -84,100 +70,88 @@
 <script>
 (async function () {
   const $ = (s) => document.querySelector(s);
-  const grid = $('#grid'), count = $('#count'), go = $('#go'), result = $('#result');
+  const grid = $('#grid'), rowsEl = $('#rows'), count = $('#count'), barcount = $('#barcount');
+  const bar = $('#bar'), share = $('#share'), empty = $('#empty'), clear = $('#clear');
   const selected = new Set();
+  let done = new Set();   // apps already installed from this device
 
-  // Restore an in-progress selection (per browser, handy when you come back).
   try { for (const id of JSON.parse(localStorage.getItem('am.sel') || '[]')) if (AM.byId.has(id)) selected.add(id); } catch (e) {}
+  try { done = new Set(JSON.parse(localStorage.getItem('am.done') || '[]')); } catch (e) {}
 
   await AM.loadIcons();
-  $('#catalog-note').textContent = AM.ordered.length + ' apps, ' + CATEGORIES.length + ' categories';
 
-  // Build the grid.
-  const rows = new Map();
+  // The catalog: one checkbox row per app, categories flow into columns.
+  const boxes = new Map();
   for (const [cat, apps] of CATEGORIES) {
     const sec = document.createElement('section');
     sec.className = 'cat';
-    sec.innerHTML = '<h3></h3>';
-    sec.querySelector('h3').textContent = cat;
+    const h = document.createElement('h3'); h.textContent = cat; sec.append(h);
     for (const [id, name] of apps) {
       const app = AM.byId.get(id);
       const label = document.createElement('label');
       label.className = 'app';
-      label.dataset.id = id;
       const cb = document.createElement('input');
       cb.type = 'checkbox'; cb.checked = selected.has(id);
       cb.addEventListener('change', () => { cb.checked ? selected.add(id) : selected.delete(id); update(); });
-      label.append(cb, AM.iconEl(app, 'ic'));
       const nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = name;
-      label.append(nm);
+      label.append(cb, AM.iconEl(app, 'ic'), nm);
       sec.append(label);
-      rows.set(id, label);
+      boxes.set(id, { cb, label });
     }
     grid.append(sec);
   }
-  // Fill in any icons we don't have baked in.
   AM.hydrate(AM.ordered.map((a) => a.id), () => {
-    for (const [id, label] of rows) {
+    for (const [id, { label }] of boxes) {
       const cur = label.querySelector('.ic');
       if (cur.classList.contains('letter') && AM.iconFor(id)) cur.replaceWith(AM.iconEl(AM.byId.get(id), 'ic'));
     }
+    renderList();
   });
 
-  // Filter.
-  $('#q').addEventListener('input', (e) => {
-    const q = e.target.value.trim().toLowerCase();
-    for (const [id, label] of rows) label.classList.toggle('hide', q && !AM.byId.get(id).name.toLowerCase().includes(q));
-    for (const sec of grid.children) sec.classList.toggle('empty', !sec.querySelector('.app:not(.hide)'));
-  });
-
-  $('#clear').addEventListener('click', () => {
+  clear.addEventListener('click', () => {
     selected.clear();
-    for (const l of rows.values()) l.querySelector('input').checked = false;
+    for (const { cb } of boxes.values()) cb.checked = false;
     update();
   });
 
-  function update() {
-    const n = selected.size;
-    count.textContent = n ? `${n} app${n === 1 ? '' : 's'} picked` : 'Nothing picked yet';
-    go.disabled = !n;
-    $('#clear').hidden = !n;
-    try { localStorage.setItem('am.sel', JSON.stringify([...selected])); } catch (e) {}
-    if (!result.hidden) render();
-  }
+  function ids() { return AM.ordered.filter((a) => selected.has(a.id)).map((a) => a.id); }
+  function save() { try { localStorage.setItem('am.sel', JSON.stringify([...selected])); } catch (e) {} }
+  function update() { save(); renderList(); }
 
-  go.addEventListener('click', () => { render(); result.hidden = false; result.scrollIntoView({ behavior: 'smooth', block: 'start' }); });
-
-  function render() {
-    const ids = AM.ordered.filter((a) => selected.has(a.id)).map((a) => a.id);
-    const url = AM.listUrl(ids);
-    $('#url').value = url;
-    $('#open').href = url;
-    const chips = $('#chips'); chips.innerHTML = '';
-    for (const id of ids) {
-      const a = AM.byId.get(id);
-      const c = document.createElement('span'); c.className = 'chip';
-      c.append(AM.iconEl(a, 'ci'), document.createTextNode(a.name));
-      chips.append(c);
+  // Your list: install from here on the phone, or send the link elsewhere.
+  function renderList() {
+    const list = ids(), n = list.length;
+    count.textContent = n ? `${n} app${n === 1 ? '' : 's'}` : '';
+    barcount.textContent = n ? `${n} picked` : '';
+    bar.hidden = !n; empty.hidden = !!n; share.hidden = !n; clear.hidden = !n;
+    rowsEl.innerHTML = '';
+    for (const id of list) {
+      rowsEl.append(AM.rowEl(AM.byId.get(id), {
+        done: done.has(id),
+        onGet: () => { done.add(id); try { localStorage.setItem('am.done', JSON.stringify([...done])); } catch (e) {} },
+        onRemove: () => { selected.delete(id); boxes.get(id).cb.checked = false; update(); },
+      }));
     }
+    if (!n) return;
+    const url = AM.listUrl(list);
+    $('#url').value = url;
     const qr = $('#qr'); qr.innerHTML = '';
-    if (window.qrcode && ids.length) {
-      try {
-        const q = qrcode(0, 'M'); q.addData(url); q.make();
-        qr.innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
-        qr.firstElementChild.style.width = '180px'; qr.firstElementChild.style.height = '180px';
-      } catch (e) { qr.hidden = true; }
-    } else qr.hidden = true;
+    if (window.qrcode) {
+      try { const q = qrcode(0, 'M'); q.addData(url); q.make(); qr.innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); }
+      catch (e) { /* too long for a QR: the link box still works */ }
+    }
+    qr.hidden = !qr.firstChild;
   }
 
   $('#copy').addEventListener('click', async () => {
     const b = $('#copy');
-    try { await navigator.clipboard.writeText($('#url').value); b.textContent = 'Copied'; }
-    catch (e) { $('#url').select(); document.execCommand('copy'); b.textContent = 'Copied'; }
+    try { await navigator.clipboard.writeText($('#url').value); }
+    catch (e) { $('#url').select(); document.execCommand('copy'); }
+    b.textContent = 'Copied';
     setTimeout(() => (b.textContent = 'Copy'), 1500);
   });
 
-  update();
+  renderList();
 })();
 </script>
 </body>

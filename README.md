@@ -1,11 +1,17 @@
 # appsmore
 
-**The good iPhone apps, hand-picked.** Ninite-before-the-installer, for iOS.
+**The good iPhone apps, hand-picked.** Ninite-before-the-installer, for iOS,
+laid out for the iPhone Duo's two screens.
 
 A static page with a short, curated list of apps in a few columns. Tick what
-you want, get one link (or a QR code), open it on the iPhone, and each
-**Get** button drops you into the App Store for that app. Progress is
-remembered on the phone.
+you want; on the phone, tap **Get** in your list and each one drops you into
+the App Store. To set up another phone, send it one link (or scan the QR
+code). Progress is remembered on the phone.
+
+Layout follows the Duo's CSS viewports: 466px closed (two columns), 626px
+open (three), 890px open landscape (catalog on one half, your list on the
+other, nothing across the crease). Safari exposes no fold API, so width is
+all we use.
 
 No build step, no backend, no accounts. The whole list is encoded in the link.
 
@@ -13,13 +19,14 @@ No build step, no backend, no accounts. The whole list is encoded in the link.
 
 | File | What it is |
 |---|---|
-| `apps.js` | **The list.** Hand-edited. One line per app: `[appStoreId, "Name"]`, grouped by category. |
+| `apps.js` | **The list.** Hand-edited. One line per app: `[appStoreId, "Name"]`, grouped by category. Optional third field: tags, e.g. `["duo"]`. |
 | `icons.json` | Generated icon paths + developer names, keyed by App Store id. |
 | `index.html` | The picker. |
 | `l.html` | The list page (`l.html#<ids>`), what people open on their phone. |
 | `about.html` | Why this exists. |
 | `common.js` / `style.css` | Shared code and styles. |
 | `scripts/icons.mjs` | Regenerates `icons.json` from `apps.js` using Apple's lookup API. |
+| `robots.txt` / `sitemap.xml` | Search engine plumbing. `l.html` is noindex. |
 
 ## Editing the list
 
@@ -43,8 +50,9 @@ live lookup.)
 
 ## Deploying
 
-It's five static files. GitHub Pages, Cloudflare Pages, Netlify, or an S3
-bucket behind the domain. Point `appsmore.com` at it and you're done.
+Static files, no build. Currently on build.host (project `appsmore`,
+static pack) at https://appsmore.build.host, deploying `main` from this repo;
+`appsmore.com` points at it. Any static host works.
 
 ## How the link works
 
