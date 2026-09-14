@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="appsmore: hand-picked iPhone apps, built for the iPhone Duo">
 <meta name="twitter:image" content="https://appsmore.com/og.png">
 <meta name="theme-color" content="#0b0b0f">
-<link rel="stylesheet" href="style.css?v=13">
+<link rel="stylesheet" href="style.css?v=14">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -173,12 +173,12 @@
       </div>
       <p class="empty" id="empty">Nothing picked yet. Tap icons and they show up here, each with a Get button. Install from this phone, or send the list to another one.</p>
       <div class="share" id="share">
-        <div class="urlbox">
-          <input type="text" id="url" readonly aria-label="Link to this list">
-          <button class="btn" id="copy">Copy</button>
-        </div>
+        <a class="link" id="url" href="./" aria-label="Link to this list"></a>
         <div class="qr" id="qr"></div>
-        <p class="hint" id="hint">Scan on the new phone, or text it the link. The whole list is in the link; nothing is stored anywhere.</p>
+        <div class="copyrow">
+          <button class="btn" id="copy">Copy link</button>
+          <p class="hint" id="hint">Scan on the new phone, or text it the link. The whole list is in the link; nothing is stored anywhere.</p>
+        </div>
       </div>
       <div id="rows"></div>
       <p class="order-note" id="order-note" hidden>In setup order: passwords first, then the rest.</p>
@@ -195,8 +195,8 @@
   appsmore is a personal list, not a store. Made by <a href="https://x.com/protosphinx" rel="me noopener">@protosphinx</a> on NEO. App names and icons belong to their developers; links go to Apple's App Store.
 </footer>
 
-<script src="apps.js?v=13"></script>
-<script src="common.js?v=13"></script>
+<script src="apps.js?v=14"></script>
+<script src="common.js?v=14"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
 (async function () {
@@ -311,7 +311,8 @@
       }));
     }
     const url = n ? AM.listUrl(list) : location.href.replace(/[?#].*$/, '');
-    $('#url').value = url;
+    $('#url').textContent = url.replace(/^https?:\/\//, '');
+    $('#url').href = url;
     const qr = $('#qr'); qr.innerHTML = '';
     if (window.qrcode) {
       try { const q = qrcode(0, 'M'); q.addData(url); q.make(); qr.innerHTML = q.createSvgTag({ cellSize: 4, margin: 0, scalable: true }); }
@@ -321,11 +322,14 @@
   }
 
   $('#copy').addEventListener('click', async () => {
-    const b = $('#copy');
-    try { await navigator.clipboard.writeText($('#url').value); }
-    catch (e) { $('#url').select(); document.execCommand('copy'); }
+    const b = $('#copy'), url = $('#url').href;
+    try { await navigator.clipboard.writeText(url); }
+    catch (e) {
+      const t = document.createElement('textarea'); t.value = url; t.style.position = 'fixed'; t.style.opacity = '0';
+      document.body.append(t); t.select(); try { document.execCommand('copy'); } catch (e2) {} t.remove();
+    }
     b.textContent = 'Copied';
-    setTimeout(() => (b.textContent = 'Copy'), 1500);
+    setTimeout(() => (b.textContent = 'Copy link'), 1500);
   });
 
   renderList();
