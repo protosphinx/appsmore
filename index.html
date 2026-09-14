@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="appsmore: hand-picked iPhone apps, built for the iPhone Duo">
 <meta name="twitter:image" content="https://appsmore.com/og.png">
 <meta name="theme-color" content="#0b0b0f">
-<link rel="stylesheet" href="style.css?v=17">
+<link rel="stylesheet" href="style.css?v=18">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -195,8 +195,8 @@
   appsmore is a personal list, not a store. Made by <a href="https://x.com/protosphinx" rel="me noopener">@protosphinx</a> on NEO. App names and icons belong to their developers; links go to Apple's App Store.
 </footer>
 
-<script src="apps.js?v=17"></script>
-<script src="common.js?v=17"></script>
+<script src="apps.js?v=18"></script>
+<script src="common.js?v=18"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
 (async function () {
@@ -205,6 +205,9 @@
   const bar = $('#bar'), share = $('#share'), empty = $('#empty'), clear = $('#clear');
   const selected = new Set();
   let done = new Set();   // apps already installed from this device
+  let longUrl = '';             // the never-expires link for the current list
+  const shortFor = new Map();   // encoded list -> short url (null = user prefers the long link)
+  let shortTimer = 0;
 
   try { for (const id of JSON.parse(localStorage.getItem('am.sel') || '[]')) if (AM.byId.has(id)) selected.add(id); } catch (e) {}
   try { done = new Set(JSON.parse(localStorage.getItem('am.done') || '[]')); } catch (e) {}
@@ -321,7 +324,6 @@
   }
 
   // kind: 'site' (nothing picked), 'long' (list.html#a.b.c), 'short' (appsmore.com/phrase)
-  let longUrl = '';
   function showLink(url, kind) {
     const el = $('#url');
     // zero-width spaces after the dots so a long link wraps between apps, not mid-word
@@ -346,8 +348,6 @@
   // Short link: appsmore.com/tigereatsapple, minted by the Cloudflare Worker
   // once the list has settled for a second. Same list, same phrase. If the
   // Worker isn't reachable (local dev, outage) the long link simply stays.
-  const shortFor = new Map();   // encoded list -> short url
-  let shortTimer = 0;
   function shortenSoon(list) {
     const key = AM.encodeList(list);
     clearTimeout(shortTimer);
