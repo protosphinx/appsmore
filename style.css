@@ -99,7 +99,7 @@ button.link { background: none; border: 0; color: var(--blue); cursor: pointer; 
 .row.done .nm { color: var(--muted); }
 
 /* send it to a phone */
-.share { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: 10px 14px; align-items: start; }
+.share { margin: 10px 0 4px; padding-bottom: 14px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: 10px 14px; align-items: start; }
 .urlbox { display: flex; gap: 6px; grid-column: 1; }
 .urlbox input { flex: 1; min-width: 0; font: 13px/1.2 ui-monospace, Menlo, monospace; padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); }
 .qr { grid-column: 2; grid-row: 1 / span 2; background: #fff; padding: 6px; border-radius: 10px; }
