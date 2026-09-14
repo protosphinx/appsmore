@@ -24,9 +24,10 @@ No build step, no backend, no accounts. The whole list is encoded in the link.
 | `index.html` | The picker. |
 | `l.html` | The list page (`l.html#<ids>`), what people open on their phone. |
 | `about.html` | Why this exists. |
+| `setup.html` | New iPhone setup, in the right order. Links into the picker with `?pack=<slug>`. |
 | `common.js` / `style.css` | Shared code and styles. |
 | `scripts/icons.mjs` | Regenerates `icons.json` from `apps.js` using Apple's lookup API. |
-| `scripts/bake.mjs` | Pre-renders the catalog + ItemList JSON-LD into `index.html` between markers, so crawlers see every app without JavaScript. The page still works unbaked. |
+| `scripts/bake.mjs` | Pre-renders the catalog + ItemList JSON-LD into `index.html` between markers (so crawlers see every app without JavaScript) and writes `sitemap.xml` with git `lastmod`. The page still works unbaked. |
 | `og.png` | Social preview image (1200x630). |
 | `<key>.txt` | IndexNow key file, so Bing and friends get pinged when the list changes. |
 | `robots.txt` / `sitemap.xml` | Search engine plumbing. `l.html` is noindex. |

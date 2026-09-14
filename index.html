@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="appsmore: hand-picked iPhone apps, built for the iPhone Duo">
 <meta name="twitter:image" content="https://appsmore.com/og.png">
 <meta name="theme-color" content="#0b0b0f">
-<link rel="stylesheet" href="style.css?v=7">
+<link rel="stylesheet" href="style.css?v=8">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -35,6 +35,7 @@
   <div class="wrap">
     <a class="brand" href="./">appsmore</a>
     <nav>
+      <a href="setup.html">New iPhone?</a>
       <a href="about.html">About</a>
       <a href="https://github.com/protosphinx/appsmore">GitHub</a>
     </nav>
@@ -193,8 +194,8 @@
   appsmore is a personal list, not a store. Made by <a href="https://x.com/protosphinx" rel="me noopener">@protosphinx</a> on NEO. App names and icons belong to their developers; links go to Apple's App Store.
 </footer>
 
-<script src="apps.js?v=7"></script>
-<script src="common.js?v=7"></script>
+<script src="apps.js?v=8"></script>
+<script src="common.js?v=8"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
 (async function () {
@@ -212,11 +213,14 @@
   $('#catalog-note').innerHTML = `${AM.ordered.length} apps, ${CATEGORIES.length} categories, every one picked by <a href="https://x.com/protosphinx" rel="me noopener">@protosphinx</a>.`;
 
   // Starter packs: one tap picks a whole set (defined in apps.js).
+  // ?pack=<slug> in the URL applies one on load (the setup page links here).
+  const slug = (t) => t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  function applyPack(packIds) { selected.clear(); for (const id of packIds) if (AM.byId.has(id)) selected.add(id); for (const [id, { cb }] of boxes) cb.checked = selected.has(id); update(); }
   if (typeof PACKS !== 'undefined' && PACKS.length) {
     const wrap = $('#packs'); wrap.hidden = false;
     for (const [name, packIds] of PACKS) {
       const b = document.createElement('button'); b.type = 'button'; b.className = 'pack'; b.textContent = name;
-      b.addEventListener('click', () => { selected.clear(); for (const id of packIds) if (AM.byId.has(id)) selected.add(id); for (const [id, { cb }] of boxes) cb.checked = selected.has(id); update(); });
+      b.addEventListener('click', () => applyPack(packIds));
       wrap.append(b);
     }
   }
@@ -269,6 +273,12 @@
     }
     renderList();
   });
+
+  const wanted = new URLSearchParams(location.search).get('pack');
+  if (wanted && typeof PACKS !== 'undefined') {
+    const hit = PACKS.find(([name]) => slug(name) === wanted);
+    if (hit) { applyPack(hit[1]); history.replaceState(null, '', location.pathname); $('#mine').scrollIntoView({ block: 'nearest' }); }
+  }
 
   clear.addEventListener('click', () => {
     selected.clear();

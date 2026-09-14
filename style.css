@@ -173,3 +173,11 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
 .removed ul { margin: 0; padding: 0; list-style: none; }
 .removed li { margin: 3px 0; }
 .removed b { color: #d6d6dd; font-weight: 600; }
+
+/* setup page */
+.prose ul, .prose ol { padding-left: 20px; margin: 6px 0 10px; }
+.prose li { margin: 5px 0; color: #d6d6dd; }
+.prose b { color: var(--ink); }
+.packs-inline { display: flex; flex-wrap: wrap; gap: 8px; }
+.packs-inline .pack { text-decoration: none; }
+.prose .fine { color: var(--muted); font-size: 13px; margin-top: 26px; }

@@ -1,6 +1,6 @@
 # appsmore - status
 
-**Current state (2026-09-14):** v0.7 live at https://appsmore.com (also
+**Current state (2026-09-14):** v0.8 live at https://appsmore.com (also
 www and https://appsmore.build.host), valid Let's Encrypt certificates on all
 three, HTTP redirects to HTTPS. Static site, no backend. One picker page laid
 out for the iPhone Duo's two screens, a shareable list page, an about page.
@@ -28,6 +28,11 @@ so search engines can find it.
 
 ## Just shipped
 
+- v0.8: `setup.html`, "New iPhone setup, in the right order" (targets the
+  "new iphone setup" cluster; links into the picker with `?pack=<slug>` deep
+  links, which index.html now honours). `bake.mjs` also writes `sitemap.xml`
+  with git-derived `lastmod`. Nav gained "New iPhone?". Filed
+  erphq/build-host#29 (static pack serves uncompressed; wildcard cert note).
 - v0.7 content: a one-line "why" for all 67 apps (drafted by the agent in the
   owner's voice, owner edits live), the curator credit ("made by
   @protosphinx on NEO", same as BOMwiki; "Who picks" on About), four starter
@@ -105,7 +110,8 @@ so search engines can find it.
 - Watch Search Console (verified 2026-09-14; sitemap submitted and homepage
   indexing requested the same day): first Performance/Indexing data in a
   day or two; confirm the favicon flips from the old WordPress "W".
-- Ask build.host to enable gzip/brotli (responses currently uncompressed).
+- build.host gzip: filed as erphq/build-host#29; re-check headers when it
+  lands.
 
 - Wire push-to-deploy: add `protosphinx/appsmore` to the Build Host GitHub
   App installation, then set `is_auto_deploy_enabled`.

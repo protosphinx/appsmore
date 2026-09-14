@@ -8,6 +8,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import { execFileSync } from 'node:child_process';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const src = readFileSync(join(root, 'apps.js'), 'utf8');
@@ -70,3 +71,26 @@ splice('<!-- removed:start -->', '<!-- removed:end -->', removed);
 splice('<!-- ld:start -->', '<!-- ld:end -->', `<script type="application/ld+json">${ld}</script>`);
 writeFileSync(file, page);
 console.log(`index.html: baked ${items.length} apps in ${CATEGORIES.length} categories, ${REMOVED.length} removed`);
+
+// --- sitemap.xml with lastmod from git ------------------------------------
+// The homepage changes whenever apps.js does, so it takes the newer of the two.
+const lastmod = (...files) => {
+  let best = '';
+  for (const f of files) {
+    try {
+      const d = execFileSync('git', ['log', '-1', '--format=%cI', '--', f], { cwd: root }).toString().trim().slice(0, 10);
+      if (d > best) best = d;
+    } catch (e) { /* not a git checkout: leave lastmod out */ }
+  }
+  return best;
+};
+const pages = [
+  ['https://appsmore.com/', lastmod('apps.js', 'index.html'), 'weekly', '1.0'],
+  ['https://appsmore.com/setup.html', lastmod('setup.html'), 'monthly', '0.6'],
+  ['https://appsmore.com/about.html', lastmod('about.html'), 'monthly', '0.4'],
+];
+const sm = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+  .concat(pages.map(([loc, mod, freq, pri]) => `  <url><loc>${loc}</loc>${mod ? `<lastmod>${mod}</lastmod>` : ''}<changefreq>${freq}</changefreq><priority>${pri}</priority></url>`))
+  .concat(['</urlset>', '']).join('\n');
+writeFileSync(join(root, 'sitemap.xml'), sm);
+console.log(`sitemap.xml: ${pages.length} urls`);
