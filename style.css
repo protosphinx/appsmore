@@ -101,7 +101,9 @@ button.link { background: none; border: 0; color: var(--blue); cursor: pointer; 
 /* send it to a phone */
 .share { margin: 10px 0 4px; padding-bottom: 14px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 14px; align-items: start; }
 .urlbox { display: flex; gap: 6px; grid-column: 1; min-width: 0; }
-.urlbox input { flex: 1; width: 0; min-width: 0; font: 13px/1.2 ui-monospace, Menlo, monospace; padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); }
+.urlbox input { flex: 1 1 0; width: 0; min-width: 0; max-width: 100%; font: 13px/1.2 ui-monospace, Menlo, monospace; padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); }
+.urlbox .btn { flex: none; width: 82px; padding-left: 0; padding-right: 0; text-align: center; }
+.qr { flex: none; }
 .qr { grid-column: 2; grid-row: 1 / span 2; background: #fff; padding: 6px; border-radius: 10px; }
 .qr svg { display: block; width: 104px; height: 104px; }
 .hint { grid-column: 1; color: var(--muted); font-size: 13px; margin: 0; }
