@@ -19,8 +19,8 @@ No build step, no backend, no accounts. The whole list is encoded in the link.
 
 | File | What it is |
 |---|---|
-| `apps.js` | **The list.** Hand-edited. One line per app: `[appStoreId, "Name"]`, grouped by category. Optional third field: tags, e.g. `["duo"]`. |
-| `icons.json` | Generated icon paths + developer names, keyed by App Store id. |
+| `apps.js` | **The list.** Hand-edited. One line per app: `[appStoreId, "Name", "why", ["tags"]]`, grouped by category; `why` and `tags` are optional. Also `SETUP_ORDER` (install order for lists), `REMOVED` (what came off and why), `PACKS` (one-tap sets). |
+| `icons.json` | Generated: icon paths, developer names, size, last update, ratings, min iOS, price, keyed by App Store id. |
 | `index.html` | The picker. |
 | `l.html` | The list page (`l.html#<ids>`), what people open on their phone. |
 | `about.html` | Why this exists. |
@@ -32,11 +32,14 @@ No build step, no backend, no accounts. The whole list is encoded in the link.
 
 1. Find the app on the App Store. The id is the number after `/id` in the URL
    (`https://apps.apple.com/us/app/signal-private-messenger/id874139669` -> `874139669`).
-2. Add `[874139669, "Signal"],` under the right category in `apps.js`. Make a
-   new category by adding another `["Name", [...]]` block. Order in the file is
-   the order on the page.
-3. `node scripts/icons.mjs` to bake the icon (needs network). If you skip this
-   the site looks the icon up live from Apple and caches it in the browser.
+2. Add `[874139669, "Signal", "The one messenger I'd give my parents."],` under
+   the right category in `apps.js` (the sentence is optional but is the point).
+   Make a new category by adding another `["Name", [...]]` block. Order in the
+   file is the order on the page. Lists sort by `SETUP_ORDER` so the password
+   manager comes first on a fresh phone.
+3. `node scripts/icons.mjs` to bake the icon, size and update date (needs
+   network). If you skip this the site looks the icon up live from Apple and
+   caches it in the browser; size and freshness stay blank until baked.
 4. Bump the `?v=` on the `style.css` / `apps.js` / `common.js` references in
    the three HTML files (and `icons.json` in `common.js`) whenever those files
    change, so browsers don't keep the old copies.

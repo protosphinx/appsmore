@@ -9,8 +9,9 @@
   const ordered = [];
   if (typeof CATEGORIES !== 'undefined') {
     for (const [cat, apps] of CATEGORIES) {
-      for (const [id, name, tags] of apps) {
-        const a = { id, name, cat, tags: tags || [] };
+      for (let [id, name, why, tags] of apps) {
+        if (Array.isArray(why)) { tags = why; why = ''; }   // [id, name, ["duo"]] still works
+        const a = { id, name, cat, why: why || '', tags: tags || [] };
         byId.set(id, a);
         ordered.push(a);
       }
@@ -27,7 +28,7 @@
   async function loadIcons() {
     if (iconMeta) return iconMeta;
     try {
-      const r = await fetch('icons.json?v=4', { cache: 'force-cache' });
+      const r = await fetch('icons.json?v=5', { cache: 'force-cache' });
       iconMeta = await r.json();
     } catch (e) {
       iconMeta = { base: '', suffix: '', icons: {}, sellers: {} };
@@ -46,6 +47,26 @@
   function sellerFor(id) {
     const m = iconMeta || { sellers: {} };
     return m.sellers[id] || (cache[id] && cache[id].seller) || '';
+  }
+  // Baked metadata: { size, updated, rating, ratings, ios, price }.
+  function metaFor(id) { return (iconMeta && iconMeta.meta && iconMeta.meta[id]) || null; }
+  function fmtSize(bytes) {
+    if (!bytes) return '';
+    return bytes >= 1e9 ? (bytes / 1e9).toFixed(1) + ' GB' : Math.round(bytes / 1e6) + ' MB';
+  }
+  function totalSize(ids) { return ids.reduce((s, id) => s + ((metaFor(id) || {}).size || 0), 0); }
+  // Updated in the last 90 days: fresh. Over a year: stale. Else quiet.
+  function freshness(id) {
+    const m = metaFor(id); if (!m || !m.updated) return '';
+    const days = (Date.now() - new Date(m.updated)) / 864e5;
+    return days < 90 ? 'fresh' : days > 365 ? 'stale' : '';
+  }
+  // Setup order: SETUP_ORDER categories first, then page order.
+  function setupSort(ids) {
+    const order = typeof SETUP_ORDER !== 'undefined' ? SETUP_ORDER : [];
+    const rank = (id) => { const a = byId.get(id); const i = a ? order.indexOf(a.cat) : -1; return i < 0 ? order.length : i; };
+    const pos = new Map(ordered.map((a, i) => [a.id, i]));
+    return [...ids].sort((x, y) => rank(x) - rank(y) || (pos.get(x) ?? 1e9) - (pos.get(y) ?? 1e9));
   }
 
   // Fill in icons/sellers for ids we know nothing about, then call onUpdate.
@@ -96,8 +117,12 @@
     row.append(iconEl(app, 'ic', 128));
     const txt = document.createElement('div'); txt.className = 'txt';
     const nm = document.createElement('div'); nm.className = 'nm'; nm.textContent = app.name;
-    const by = document.createElement('div'); by.className = 'by'; by.textContent = sellerFor(app.id);
+    const by = document.createElement('div'); by.className = 'by';
+    const m = metaFor(app.id), f = freshness(app.id);
+    if (f) { const dot = document.createElement('i'); dot.className = 'dot ' + f; dot.title = f === 'fresh' ? 'Updated in the last 90 days' : 'Not updated in over a year'; by.append(dot); }
+    by.append(document.createTextNode([sellerFor(app.id), m && fmtSize(m.size)].filter(Boolean).join(' \u00b7 ')));
     txt.append(nm, by);
+    if (app.why) { const w = document.createElement('div'); w.className = 'why'; w.textContent = app.why; txt.append(w); }
     row.append(txt);
     if (o.onRemove) {
       const x = document.createElement('button');
@@ -128,5 +153,5 @@
     return byId.get(id) || { id, name: (cache[id] && cache[id].name) || `App ${id}`, cat: '' };
   }
 
-  window.AM = { STORE_URL, byId, ordered, loadIcons, iconFor, sellerFor, hydrate, iconEl, rowEl, encodeList, decodeList, listUrl, appFor };
+  window.AM = { STORE_URL, byId, ordered, loadIcons, iconFor, sellerFor, metaFor, fmtSize, totalSize, freshness, setupSort, hydrate, iconEl, rowEl, encodeList, decodeList, listUrl, appFor };
 })();

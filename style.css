@@ -158,3 +158,18 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
   .tile .ico, .tile .ico .ic { width: 72px; height: 72px; border-radius: 17px; }
   .cat h3 { font-size: 19px; }
 }
+
+/* v0.5: packs, why lines, freshness, graveyard */
+.packs { display: flex; flex-wrap: wrap; gap: 8px; margin: -8px 0 22px; }
+.pack { font: inherit; font-size: 13px; font-weight: 600; color: var(--ink); background: var(--panel-2); border: 0; border-radius: 999px; padding: 7px 13px; cursor: pointer; }
+.pack:hover { background: #2b2b34; }
+.row .why { color: #d6d6dd; font-size: 13px; line-height: 1.35; margin-top: 3px; }
+.row .dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin: 0 6px 1px 0; vertical-align: middle; background: var(--muted); }
+.row .dot.fresh { background: var(--green); }
+.row .dot.stale { background: #ff9f0a; }
+.order-note { color: var(--muted); font-size: 12px; margin: 10px 0 0; }
+.removed { margin: 8px 0 30px; color: var(--muted); font-size: 13px; }
+.removed h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 0 0 6px; }
+.removed ul { margin: 0; padding: 0; list-style: none; }
+.removed li { margin: 3px 0; }
+.removed b { color: #d6d6dd; font-weight: 600; }

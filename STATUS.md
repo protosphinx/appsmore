@@ -1,6 +1,6 @@
 # appsmore - status
 
-**Current state (2026-09-14):** v0.4 live at https://appsmore.com (also
+**Current state (2026-09-14):** v0.5 live at https://appsmore.com (also
 www and https://appsmore.build.host), valid Let's Encrypt certificates on all
 three, HTTP redirects to HTTPS. Static site, no backend. One picker page laid
 out for the iPhone Duo's two screens, a shareable list page, an about page.
@@ -28,6 +28,16 @@ so search engines can find it.
 
 ## Just shipped
 
+- v0.5 substance plumbing: `apps.js` lines take an optional "why" sentence
+  (shown in lists) and tags; `SETUP_ORDER` sorts every list into install
+  order (passwords first); `icons.json` now bakes size, last update, ratings,
+  min iOS and price; lists show total download size, per-app size and a
+  freshness dot (green under 90 days, orange over a year); `REMOVED`
+  renders a "Not on the list, on purpose" strip; `PACKS` renders one-tap
+  starter packs when defined. Owner still to write: the why lines, the
+  packs, more graveyard entries, the curator line.
+- Correction: the v0.1 note below says Hulu was "folded into Disney+". It
+  was not; the Hulu app is alive (updated 2026-09-08). It was simply cut.
 - v0.4 design, fresh start: the icons are the design. Dark ground, iOS-style
   home-screen grid per category (64px icons, 4 across on the closed Duo, 6
   open, 72px on laptops), tap an icon to pick it (blue ring + check badge),

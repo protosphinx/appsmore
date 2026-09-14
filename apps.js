@@ -1,9 +1,11 @@
 // appsmore catalog - hand-picked, one line per app.
-// Format: [App Store id, "Display name"]. The id is the number after /id in the App Store URL.
-// Icons are looked up automatically (icons.json, then the App Store API). Delete freely.
+// Format: [App Store id, "Display name", "why", ["tags"]]. The id is the number
+// after /id in the App Store URL. "why" is one sentence in your own voice,
+// shown in the list (leave it out until you have one). Tags are optional;
+// ["duo"] means tried on an iPhone Duo and it uses the inner display properly.
+// Icons, sizes and update dates are looked up automatically (icons.json via
+// scripts/icons.mjs, then the App Store API). Delete freely.
 // Order here is order on the page. v0.1: the obvious picks, to be pruned by hand.
-// Optional third field, tags, e.g. [id, "Name", ["duo"]] once an app has been
-// tried on an iPhone Duo and uses the inner display properly. None yet.
 
 const CATEGORIES = [
   ["Messaging", [
@@ -98,3 +100,16 @@ const CATEGORIES = [
     [663592361, "DuckDuckGo"],
   ]],
 ];
+
+// The order things get installed on a fresh phone. Your list sorts by this,
+// because you can't sign in to anything before the password manager is on.
+// Categories not listed here come after, in page order.
+const SETUP_ORDER = ["Passwords & 2FA", "Google", "Messaging", "Browsers", "Work"];
+
+// Not on the list, on purpose. ["Name", "one line why"]. Shown at the bottom.
+const REMOVED = [
+  ["Shazam", "built into iOS: music recognition lives in Control Center"],
+];
+
+// Starter packs: one tap picks a whole set. ["Name", [ids...]]. None yet.
+const PACKS = [];

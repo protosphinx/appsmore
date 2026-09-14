@@ -11,7 +11,7 @@
 <meta property="og:url" content="https://appsmore.com/">
 <meta property="og:type" content="website">
 <meta name="theme-color" content="#2a5bd7">
-<link rel="stylesheet" href="style.css?v=4">
+<link rel="stylesheet" href="style.css?v=5">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"WebSite","name":"appsmore","url":"https://appsmore.com/","description":"A short, hand-picked list of iPhone apps worth installing, laid out for the iPhone Duo."}
@@ -33,9 +33,16 @@
   <h1 class="title">The good iPhone apps. Hand-picked.</h1>
   <p class="lede">Kept short on purpose. Built for the iPhone Duo. Tap the ones you want, then install from your list, or send it to a phone as one link.</p>
   <p class="meta" id="catalog-note"></p>
+  <div class="packs" id="packs" hidden></div>
 
   <div class="panes">
-    <section class="catalog" id="grid" aria-label="Apps by category"></section>
+    <div>
+      <section class="catalog" id="grid" aria-label="Apps by category"></section>
+      <section class="removed" id="removed" hidden>
+        <h3>Not on the list, on purpose</h3>
+        <ul id="removed-list"></ul>
+      </section>
+    </div>
 
     <aside class="mine" id="mine">
       <div class="mine-head">
@@ -45,6 +52,7 @@
       </div>
       <p class="empty" id="empty">Nothing picked yet. Tap icons and they show up here, each with a Get button. Install from this phone, or send the list to another one.</p>
       <div id="rows"></div>
+      <p class="order-note" id="order-note" hidden>In setup order: passwords first, then the rest.</p>
       <div class="share" id="share" hidden>
         <div class="urlbox">
           <input type="text" id="url" readonly aria-label="Link to this list">
@@ -66,8 +74,8 @@
   appsmore is a personal list, not a store. App names and icons belong to their developers; links go to Apple's App Store.
 </footer>
 
-<script src="apps.js?v=4"></script>
-<script src="common.js?v=4"></script>
+<script src="apps.js?v=5"></script>
+<script src="common.js?v=5"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
 (async function () {
@@ -83,6 +91,23 @@
   await AM.loadIcons();
 
   $('#catalog-note').textContent = `${AM.ordered.length} apps, ${CATEGORIES.length} categories, every one picked by a person.`;
+
+  // Starter packs: one tap picks a whole set (defined in apps.js).
+  if (typeof PACKS !== 'undefined' && PACKS.length) {
+    const wrap = $('#packs'); wrap.hidden = false;
+    for (const [name, packIds] of PACKS) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'pack'; b.textContent = name;
+      b.addEventListener('click', () => { selected.clear(); for (const id of packIds) if (AM.byId.has(id)) selected.add(id); for (const [id, { cb }] of boxes) cb.checked = selected.has(id); update(); });
+      wrap.append(b);
+    }
+  }
+  // What came off, and why (defined in apps.js).
+  if (typeof REMOVED !== 'undefined' && REMOVED.length) {
+    $('#removed').hidden = false;
+    for (const [name, why] of REMOVED) {
+      const li = document.createElement('li'); const b = document.createElement('b'); b.textContent = name; li.append(b, document.createTextNode(': ' + why)); $('#removed-list').append(li);
+    }
+  }
 
   // The catalog: a home-screen grid per category. Tap an icon to pick it.
   const boxes = new Map();
@@ -123,16 +148,17 @@
     update();
   });
 
-  function ids() { return AM.ordered.filter((a) => selected.has(a.id)).map((a) => a.id); }
+  function ids() { return AM.setupSort(AM.ordered.filter((a) => selected.has(a.id)).map((a) => a.id)); }
   function save() { try { localStorage.setItem('am.sel', JSON.stringify([...selected])); } catch (e) {} }
   function update() { save(); renderList(); }
 
   // Your list: install from here on the phone, or send the link elsewhere.
   function renderList() {
-    const list = ids(), n = list.length;
-    count.textContent = n ? `${n} app${n === 1 ? '' : 's'}` : '';
-    barcount.textContent = n ? `${n} picked` : '';
+    const list = ids(), n = list.length, size = AM.fmtSize(AM.totalSize(list));
+    count.textContent = n ? `${n} app${n === 1 ? '' : 's'}${size ? ', ' + size : ''}` : '';
+    barcount.textContent = n ? `${n} picked${size ? ', ' + size : ''}` : '';
     bar.hidden = !n; empty.hidden = !!n; share.hidden = !n; clear.hidden = !n;
+    $('#order-note').hidden = n < 2;
     rowsEl.innerHTML = '';
     for (const id of list) {
       rowsEl.append(AM.rowEl(AM.byId.get(id), {
