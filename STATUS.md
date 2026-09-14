@@ -11,6 +11,13 @@ so search engines can find it.
 
 ## Hosting
 
+- Short links: Cloudflare Worker `appsmore-links` (worker/) on the route
+  `appsmore.com/*` with KV namespace `appsmore-links`. `appsmore.com/<phrase>`
+  redirects to `list.html#<list>`; `POST /api/short` mints phrases. Apex and
+  www are proxied through Cloudflare (SSL Full strict, Always Use HTTPS on),
+  which also gives compression. Deploy: `cd worker && npx wrangler@4 deploy`
+  with `CLOUDFLARE_API_TOKEN` + `CLOUDFLARE_ACCOUNT_ID`.
+
 - Source: https://github.com/protosphinx/appsmore (public, `main`).
 - Host: build.host, project `appsmore` (static pack, nginx, no build step),
   server `5.78.195.200`. Deploys are the repo at HEAD of `main`.
@@ -27,6 +34,10 @@ so search engines can find it.
 - Mail on the domain is Google Workspace (5 MX + SPF TXT); never touch those.
 
 ## Just shipped
+
+- Short links: `appsmore.com/tigereatsapple` style phrases via a Cloudflare
+  Worker + KV; "Short link" button in Your list; QR switches to the short
+  URL. Same list always gets the same phrase; one-year TTL refreshed on use.
 
 - Readable list links: `list.html#1password.gmail.whatsapp` (app-name slugs)
   instead of base36 ids; legacy links still decode; `l.html` redirects to

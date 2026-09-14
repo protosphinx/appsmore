@@ -30,6 +30,7 @@ No build step, no backend, no accounts. The whole list is encoded in the link.
 | `scripts/bake.mjs` | Pre-renders the catalog + ItemList JSON-LD into `index.html` between markers (so crawlers see every app without JavaScript) and writes `sitemap.xml` with git `lastmod`. The page still works unbaked. |
 | `og.png` | Social preview image (1200x630). |
 | `<key>.txt` | IndexNow key file, so Bing and friends get pinged when the list changes. |
+| `worker/` | Cloudflare Worker for short links (`appsmore.com/tigereatsapple`). The only server code, and the site works without it. |
 | `robots.txt` / `sitemap.xml` | Search engine plumbing. `l.html` is noindex. |
 
 ## Editing the list
@@ -72,3 +73,7 @@ hyphenated), dot-separated. You can type or edit one by hand, and
 `index.html#signal.spotify` opens the picker with those selected. Nothing is
 stored server-side, so lists never expire and there is nothing to leak. Older
 links with base36 App Store ids still decode.
+
+"Short link" asks the Worker in `worker/` for a phrase (`appsmore.com/tigereatsapple`)
+that redirects to the long link. Only the phrase and the list are stored, for a
+year from last use.
