@@ -1,6 +1,6 @@
 # appsmore - status
 
-**Current state (2026-09-14):** v0.6 live at https://appsmore.com (also
+**Current state (2026-09-14):** v0.7 live at https://appsmore.com (also
 www and https://appsmore.build.host), valid Let's Encrypt certificates on all
 three, HTTP redirects to HTTPS. Static site, no backend. One picker page laid
 out for the iPhone Duo's two screens, a shareable list page, an about page.
@@ -28,6 +28,12 @@ so search engines can find it.
 
 ## Just shipped
 
+- v0.7 content: a one-line "why" for all 67 apps (drafted by the agent in the
+  owner's voice, owner edits live), the curator credit ("made by
+  @protosphinx on NEO", same as BOMwiki; "Who picks" on About), four starter
+  packs (Fresh iPhone, For my parents, Privacy first, Work phone), ten
+  graveyard entries with reasons. Re-baked: the why lines are in the
+  ItemList JSON-LD as descriptions. Duo verdicts parked until the device.
 - v0.6 SEO groundwork: `scripts/bake.mjs` pre-renders all 67 tiles (names,
   alt text, icons) plus an ItemList/SoftwareApplication JSON-LD block into
   `index.html` between markers, so crawlers see the whole list without JS
