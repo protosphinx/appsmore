@@ -27,7 +27,7 @@
   async function loadIcons() {
     if (iconMeta) return iconMeta;
     try {
-      const r = await fetch('icons.json?v=2', { cache: 'force-cache' });
+      const r = await fetch('icons.json?v=3', { cache: 'force-cache' });
       iconMeta = await r.json();
     } catch (e) {
       iconMeta = { base: '', suffix: '', icons: {}, sellers: {} };
