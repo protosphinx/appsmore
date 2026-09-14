@@ -1,0 +1,10 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "appsmore-links",
+  "main": "src/index.js",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": false,
+  "routes": [{ "pattern": "appsmore.com/*", "zone_name": "appsmore.com" }],
+  "kv_namespaces": [{ "binding": "LINKS", "id": "REPLACE_AFTER_CREATE" }],
+  "observability": { "enabled": true }
+}

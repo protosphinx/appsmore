@@ -106,7 +106,9 @@ button.link { background: none; border: 0; color: var(--blue); cursor: pointer; 
 .qr { grid-column: 2; grid-row: 1 / span 2; flex: none; background: #fff; padding: 6px; border-radius: 10px; }
 .qr svg { display: block; width: 104px; height: 104px; }
 .copyrow { grid-column: 1; display: flex; gap: 12px; align-items: flex-start; min-width: 0; }
-.copyrow .btn { flex: none; width: 96px; padding-left: 0; padding-right: 0; text-align: center; }
+.copyrow { flex-wrap: wrap; }
+.copyrow .btn { flex: none; padding-left: 12px; padding-right: 12px; text-align: center; white-space: nowrap; }
+.copyrow .hint { flex: 1 1 140px; }
 .hint { color: var(--muted); font-size: 13px; margin: 0; min-width: 0; }
 .btn {
   display: inline-block; background: var(--blue); color: #fff; border: 0; border-radius: 10px;
