@@ -1,13 +1,13 @@
 # appsmore - status
 
-**Current state (2026-09-13):** v0.2, live at https://appsmore.build.host.
-Static site, no backend. One picker page laid out for the iPhone Duo's two
-screens, a shareable list page, an about page. Catalog is a first real cut:
-67 obvious picks in 12 categories, chosen for restraint rather than coverage,
-and meant to be pruned by hand from here. appsmore.com points at the server
-but its TLS is blocked by a build.host platform bug (see Hosting). Public
-launch is after the Duo ships (Oct 23, 2026); the site is online now so
-search engines can find it.
+**Current state (2026-09-14):** v0.2 live at https://appsmore.com (also
+www and https://appsmore.build.host), valid Let's Encrypt certificates on all
+three, HTTP redirects to HTTPS. Static site, no backend. One picker page laid
+out for the iPhone Duo's two screens, a shareable list page, an about page.
+Catalog is a first real cut: 67 obvious picks in 12 categories, chosen for
+restraint rather than coverage, and meant to be pruned by hand from here.
+Public launch is after the Duo ships (Oct 23, 2026); the site is online now
+so search engines can find it.
 
 ## Hosting
 
@@ -17,14 +17,13 @@ search engines can find it.
 - Auto-deploy on push is not wired yet (the GitHub App installation does not
   cover this repo). Until it is, redeploy by hand after a push:
   `POST https://build.host/api/projects/<uuid>/deploy` with the account key.
-- Domain: `appsmore.com` + `www` attached to the project; Cloudflare `A`
-  record to the server, proxy off, so build.host can issue its own TLS.
-  Blocked: build.host's port-80 nginx sends unknown hosts to its marketing
-  site, so Let's Encrypt HTTP-01 for custom domains can never validate.
-  HTTPS routing on 443 is correct (site serves with a placeholder cert).
-  Fix belongs in erphq/build-host (proxy `/.well-known/acme-challenge/` for
-  all hosts to Traefik, or give Traefik port 80). Interim option: Cloudflare
-  proxy on with SSL mode Full + Always Use HTTPS.
+- Domain: `appsmore.com` + `www` attached to the project (`PATCH domains`);
+  Cloudflare `A` record to the server, proxy off. build.host issued Let's
+  Encrypt certs for both about 20 minutes after the DNS change (certs dated
+  2026-09-13 22:13 UTC, valid to 2026-12-12). Until then the custom domains
+  served a placeholder cert and port 80 fell through to build.host's own
+  site; that was a propagation window, not a platform fault. If it happens
+  again after a domain change: wait, don't redeploy in a loop.
 - Mail on the domain is Google Workspace (5 MX + SPF TXT); never touch those.
 
 ## Just shipped
@@ -62,8 +61,6 @@ search engines can find it.
 
 ## Next up
 
-- Get HTTPS on appsmore.com: fix the build.host ACME passthrough, or put the
-  Cloudflare proxy in front (Full + Always Use HTTPS) until it is fixed.
 - Wire push-to-deploy: add `protosphinx/appsmore` to the Build Host GitHub
   App installation, then set `is_auto_deploy_enabled`.
 - Prune the v0.1 catalog by hand; drop any category that doesn't earn its
