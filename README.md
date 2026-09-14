@@ -22,7 +22,7 @@ No build step, no backend, no accounts. The whole list is encoded in the link.
 | `apps.js` | **The list.** Hand-edited. One line per app: `[appStoreId, "Name", "why", ["tags"]]`, grouped by category; `why` and `tags` are optional. Also `SETUP_ORDER` (install order for lists), `REMOVED` (what came off and why), `PACKS` (one-tap sets). |
 | `icons.json` | Generated: icon paths, developer names, size, last update, ratings, min iOS, price, keyed by App Store id. |
 | `index.html` | The picker. |
-| `l.html` | The list page (`l.html#<ids>`), what people open on their phone. |
+| `list.html` | The list page (`list.html#1password.gmail.whatsapp`), what people open on their phone. `l.html` redirects there for old links. |
 | `about.html` | Why this exists. |
 | `setup.html` | New iPhone setup, in the right order. Links into the picker with `?pack=<slug>`. |
 | `common.js` / `style.css` | Shared code and styles. |
@@ -67,5 +67,8 @@ static pack) at https://appsmore.build.host, deploying `main` from this repo;
 
 ## How the link works
 
-`l.html#7hq2s.4pw6k.…` - each App Store id in base36, dot-separated. Nothing
-is stored server-side, so lists never expire and there is nothing to leak.
+`list.html#1password.gmail.whatsapp` - the words are the apps (name, lowercased,
+hyphenated), dot-separated. You can type or edit one by hand, and
+`index.html#signal.spotify` opens the picker with those selected. Nothing is
+stored server-side, so lists never expire and there is nothing to leak. Older
+links with base36 App Store ids still decode.

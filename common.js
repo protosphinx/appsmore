@@ -1,4 +1,4 @@
-// Shared helpers for index.html and l.html. No build step, no dependencies.
+// Shared helpers for index.html and list.html. No build step, no dependencies.
 (function () {
   const STORE_URL = (id) => `https://apps.apple.com/app/id${id}`;
   const LOOKUP_URL = (ids) => `https://itunes.apple.com/lookup?id=${ids.join(',')}&country=us`;
@@ -28,7 +28,7 @@
   async function loadIcons() {
     if (iconMeta) return iconMeta;
     try {
-      const r = await fetch('icons.json?v=14', { cache: 'force-cache' });
+      const r = await fetch('icons.json?v=15', { cache: 'force-cache' });
       iconMeta = await r.json();
     } catch (e) {
       iconMeta = { base: '', suffix: '', icons: {}, sellers: {} };
@@ -140,18 +140,30 @@
   }
 
   // ---- list encoding -----------------------------------------------------
-  // l.html#<id36>.<id36>... - short, stateless, nothing to host but static files.
-  function encodeList(ids) { return ids.map((n) => Number(n).toString(36)).join('.'); }
+  // list.html#1password.gmail.whatsapp - the words are the apps, so a link
+  // reads like a list and can be typed by hand. Stateless: nothing to host
+  // but static files. Older links used base36 App Store ids; still decoded.
+  const slugOf = (name) => name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+  const bySlug = new Map();
+  for (const a of ordered) { a.slug = slugOf(a.name); bySlug.set(a.slug, a.id); }
+  function encodeList(ids) { return ids.map((id) => (byId.get(id) || {}).slug || Number(id).toString(36)).join('.'); }
   function decodeList(s) {
-    return (s || '').split(/[.,]/).map((t) => parseInt(t, 36)).filter((n) => Number.isFinite(n) && n > 0);
+    const out = [];
+    for (const t of (s || '').toLowerCase().split(/[.,+ ]+/)) {
+      if (!t) continue;
+      if (bySlug.has(t)) { out.push(bySlug.get(t)); continue; }
+      const n = parseInt(t, 36);
+      if (/^[0-9a-z]{5,7}$/.test(t) && Number.isFinite(n) && n > 99999 && n < 1e11) out.push(n);   // legacy base36 App Store id
+    }
+    return [...new Set(out)];
   }
   function listUrl(ids) {
     const base = location.href.replace(/[^/]*$/, '');
-    return base + 'l.html#' + encodeList(ids);
+    return base + 'list.html#' + encodeList(ids);
   }
   function appFor(id) {
     return byId.get(id) || { id, name: (cache[id] && cache[id].name) || `App ${id}`, cat: '' };
   }
 
-  window.AM = { STORE_URL, byId, ordered, loadIcons, iconFor, sellerFor, metaFor, fmtSize, totalSize, freshness, setupSort, hydrate, iconEl, rowEl, encodeList, decodeList, listUrl, appFor };
+  window.AM = { STORE_URL, byId, bySlug, ordered, loadIcons, iconFor, sellerFor, metaFor, fmtSize, totalSize, freshness, setupSort, hydrate, iconEl, rowEl, encodeList, decodeList, listUrl, appFor };
 })();

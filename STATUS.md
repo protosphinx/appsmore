@@ -28,6 +28,10 @@ so search engines can find it.
 
 ## Just shipped
 
+- Readable list links: `list.html#1password.gmail.whatsapp` (app-name slugs)
+  instead of base36 ids; legacy links still decode; `l.html` redirects to
+  `list.html`; `index.html#signal.spotify` deep-links a selection.
+
 - Category split: "Getting around" (Uber, Lyft, Waze, Airbnb) and "Food &
   groceries" (DoorDash, Uber Eats, Instacart). 13 categories now.
 
@@ -105,8 +109,8 @@ so search engines can find it.
 - v0 scaffold: `index.html` (Ninite-style column picker with filter, sticky
   "Get your list" bar, QR code + copyable link), `l.html` (phone checklist,
   App Store deep links, per-list progress in localStorage, Web Share),
-  `about.html`, `common.js`, `style.css`. List encoding: App Store ids in
-  base36, dot-joined, in the URL hash. No server state.
+  `about.html`, `common.js`, `style.css`. List encoding: originally App Store
+  ids in base36, dot-joined, in the URL hash (now app-name slugs). No server state.
 
 ## Next up
 
