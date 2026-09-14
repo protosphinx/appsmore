@@ -1,6 +1,6 @@
 # appsmore - status
 
-**Current state (2026-09-14):** v0.2 live at https://appsmore.com (also
+**Current state (2026-09-14):** v0.3 live at https://appsmore.com (also
 www and https://appsmore.build.host), valid Let's Encrypt certificates on all
 three, HTTP redirects to HTTPS. Static site, no backend. One picker page laid
 out for the iPhone Duo's two screens, a shareable list page, an about page.
@@ -28,6 +28,9 @@ so search engines can find it.
 
 ## Just shipped
 
+- v0.3 design: grey page, white category cards flowing into columns, "Your
+  list" as a card with an explainer when empty, real h1 + one line. Review
+  loop from here: ship, the owner screenshots the live site, change, ship.
 - v0.2 design: Ninite-plain and Duo-first. No hero, no steps, no filter; one
   sentence then the list. Breakpoints are the Duo's CSS viewports: 466 closed
   (2 columns), 626 open portrait (3 columns), 890 open landscape (catalog on
