@@ -1,6 +1,6 @@
 # appsmore - status
 
-**Current state (2026-09-14):** v0.5 live at https://appsmore.com (also
+**Current state (2026-09-14):** v0.6 live at https://appsmore.com (also
 www and https://appsmore.build.host), valid Let's Encrypt certificates on all
 three, HTTP redirects to HTTPS. Static site, no backend. One picker page laid
 out for the iPhone Duo's two screens, a shareable list page, an about page.
@@ -28,6 +28,20 @@ so search engines can find it.
 
 ## Just shipped
 
+- v0.6 SEO groundwork: `scripts/bake.mjs` pre-renders all 67 tiles (names,
+  alt text, icons) plus an ItemList/SoftwareApplication JSON-LD block into
+  `index.html` between markers, so crawlers see the whole list without JS
+  (1.5k chars of text vs 750 before); the page script hydrates baked tiles
+  and only builds them if unbaked. Categories are h2 with anchor ids.
+  Meta description rewritten around the phrases people search ("best
+  iPhone apps", "new iPhone"). `og.png` 1200x630 social preview (dark, real
+  icons) + twitter card tags. IndexNow key file; pinged on deploy.
+  Research (Ahrefs, US): "best iphone apps" 800/mo KD 0, "must have iphone
+  apps" 150, "new iphone setup" 150 (TP 7k), "iphone duo" 100 pre-launch;
+  the SERP is Reddit threads and DR 14-58 blogs, so a real page can rank.
+  Domain: DR 0; its 374 referring domains are nofollow link-shop spam
+  (harmless, nothing to disavow). Not yet done: Google Search Console
+  verification (needs the owner's Google account), gzip on build.host.
 - v0.5 substance plumbing: `apps.js` lines take an optional "why" sentence
   (shown in lists) and tags; `SETUP_ORDER` sorts every list into install
   order (passwords first); `icons.json` now bakes size, last update, ratings,
@@ -79,6 +93,10 @@ so search engines can find it.
   base36, dot-joined, in the URL hash. No server state.
 
 ## Next up
+
+- Search Console: owner adds the `appsmore.com` domain property, sends the
+  TXT token; add it at Cloudflare, then submit the sitemap.
+- Ask build.host to enable gzip/brotli (responses currently uncompressed).
 
 - Wire push-to-deploy: add `protosphinx/appsmore` to the Build Host GitHub
   App installation, then set `is_auto_deploy_enabled`.

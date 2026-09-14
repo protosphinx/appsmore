@@ -46,7 +46,7 @@ img { display: block; }
 
 /* the icon grid */
 .cat { margin: 0 0 26px; }
-.cat h3 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 12px; }
+.cat h2 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 12px; }
 .tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)); gap: 16px 10px; }
 .tile {
   display: flex; flex-direction: column; align-items: center; gap: 7px;
@@ -156,7 +156,7 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
   .panes { grid-template-columns: minmax(0, 1fr) 400px; column-gap: 48px; }
   .tiles { gap: 20px 12px; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
   .tile .ico, .tile .ico .ic { width: 72px; height: 72px; border-radius: 17px; }
-  .cat h3 { font-size: 19px; }
+  .cat h2 { font-size: 19px; }
 }
 
 /* v0.5: packs, why lines, freshness, graveyard */
@@ -169,7 +169,7 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
 .row .dot.stale { background: #ff9f0a; }
 .order-note { color: var(--muted); font-size: 12px; margin: 10px 0 0; }
 .removed { margin: 8px 0 30px; color: var(--muted); font-size: 13px; }
-.removed h3 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 0 0 6px; }
+.removed h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--muted); margin: 0 0 6px; }
 .removed ul { margin: 0; padding: 0; list-style: none; }
 .removed li { margin: 3px 0; }
 .removed b { color: #d6d6dd; font-weight: 600; }

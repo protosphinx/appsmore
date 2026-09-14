@@ -26,6 +26,9 @@ No build step, no backend, no accounts. The whole list is encoded in the link.
 | `about.html` | Why this exists. |
 | `common.js` / `style.css` | Shared code and styles. |
 | `scripts/icons.mjs` | Regenerates `icons.json` from `apps.js` using Apple's lookup API. |
+| `scripts/bake.mjs` | Pre-renders the catalog + ItemList JSON-LD into `index.html` between markers, so crawlers see every app without JavaScript. The page still works unbaked. |
+| `og.png` | Social preview image (1200x630). |
+| `<key>.txt` | IndexNow key file, so Bing and friends get pinged when the list changes. |
 | `robots.txt` / `sitemap.xml` | Search engine plumbing. `l.html` is noindex. |
 
 ## Editing the list
@@ -37,9 +40,10 @@ No build step, no backend, no accounts. The whole list is encoded in the link.
    Make a new category by adding another `["Name", [...]]` block. Order in the
    file is the order on the page. Lists sort by `SETUP_ORDER` so the password
    manager comes first on a fresh phone.
-3. `node scripts/icons.mjs` to bake the icon, size and update date (needs
-   network). If you skip this the site looks the icon up live from Apple and
-   caches it in the browser; size and freshness stay blank until baked.
+3. `node scripts/icons.mjs && node scripts/bake.mjs` to bake the icon, size
+   and update date into `icons.json` and pre-render the grid into `index.html`
+   (needs network). If you skip this the site still works: it looks icons up
+   live from Apple and builds the grid in the browser; crawlers just see less.
 4. Bump the `?v=` on the `style.css` / `apps.js` / `common.js` references in
    the three HTML files (and `icons.json` in `common.js`) whenever those files
    change, so browsers don't keep the old copies.
