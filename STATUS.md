@@ -28,6 +28,9 @@ so search engines can find it.
 
 ## Just shipped
 
+- Category split: "Getting around" (Uber, Lyft, Waze, Airbnb) and "Food &
+  groceries" (DoorDash, Uber Eats, Instacart). 13 categories now.
+
 - v0.8: `setup.html`, "New iPhone setup, in the right order" (targets the
   "new iphone setup" cluster; links into the picker with `?pack=<slug>` deep
   links, which index.html now honours). `bake.mjs` also writes `sitemap.xml`

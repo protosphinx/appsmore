@@ -76,6 +76,8 @@ const CATEGORIES = [
     [529379082, "Lyft", "Check both. It is often cheaper."],
     [323229106, "Waze", "Best for driving: police, traffic and closures reported by other drivers."],
     [401626263, "Airbnb", "Places to stay. Check-in details and host messages live in the app."],
+  ]],
+  ["Food & groceries", [
     [719972451, "DoorDash", "The widest restaurant coverage in the US."],
     [1058959277, "Uber Eats", "Same idea, different restaurants. Compare the fees."],
     [545599256, "Instacart", "Groceries delivered from the stores you already shop at."],
