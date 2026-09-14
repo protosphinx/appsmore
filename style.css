@@ -99,9 +99,9 @@ button.link { background: none; border: 0; color: var(--blue); cursor: pointer; 
 .row.done .nm { color: var(--muted); }
 
 /* send it to a phone */
-.share { margin: 10px 0 4px; padding-bottom: 14px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: 1fr auto; gap: 10px 14px; align-items: start; }
-.urlbox { display: flex; gap: 6px; grid-column: 1; }
-.urlbox input { flex: 1; min-width: 0; font: 13px/1.2 ui-monospace, Menlo, monospace; padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); }
+.share { margin: 10px 0 4px; padding-bottom: 14px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 14px; align-items: start; }
+.urlbox { display: flex; gap: 6px; grid-column: 1; min-width: 0; }
+.urlbox input { flex: 1; width: 0; min-width: 0; font: 13px/1.2 ui-monospace, Menlo, monospace; padding: 9px 10px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); color: var(--ink); }
 .qr { grid-column: 2; grid-row: 1 / span 2; background: #fff; padding: 6px; border-radius: 10px; }
 .qr svg { display: block; width: 104px; height: 104px; }
 .hint { grid-column: 1; color: var(--muted); font-size: 13px; margin: 0; }
@@ -155,7 +155,7 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
   .meta { margin-bottom: 30px; }
   .panes { grid-template-columns: minmax(0, 1fr) 420px; column-gap: 56px; }
   .mine { margin-top: 40px; padding: 18px 20px 20px; }
-  .qr svg { width: 150px; height: 150px; }
+  .qr svg { width: 124px; height: 124px; }
   .tiles { gap: 20px 12px; grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); }
   .tile .ico, .tile .ico .ic { width: 72px; height: 72px; border-radius: 17px; }
   .cat h2 { font-size: 19px; }

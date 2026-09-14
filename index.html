@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="appsmore: hand-picked iPhone apps, built for the iPhone Duo">
 <meta name="twitter:image" content="https://appsmore.com/og.png">
 <meta name="theme-color" content="#0b0b0f">
-<link rel="stylesheet" href="style.css?v=10">
+<link rel="stylesheet" href="style.css?v=11">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -170,13 +170,13 @@
         <button class="link" id="clear" hidden>Clear</button>
       </div>
       <p class="empty" id="empty">Nothing picked yet. Tap icons and they show up here, each with a Get button. Install from this phone, or send the list to another one.</p>
-      <div class="share" id="share" hidden>
+      <div class="share" id="share">
         <div class="urlbox">
           <input type="text" id="url" readonly aria-label="Link to this list">
           <button class="btn" id="copy">Copy</button>
         </div>
         <div class="qr" id="qr"></div>
-        <p class="hint">Scan on the new phone, or text it the link. The whole list is in the link; nothing is stored anywhere.</p>
+        <p class="hint" id="hint">Scan on the new phone, or text it the link. The whole list is in the link; nothing is stored anywhere.</p>
       </div>
       <div id="rows"></div>
       <p class="order-note" id="order-note" hidden>In setup order: passwords first, then the rest.</p>
@@ -193,8 +193,8 @@
   appsmore is a personal list, not a store. Made by <a href="https://x.com/protosphinx" rel="me noopener">@protosphinx</a> on NEO. App names and icons belong to their developers; links go to Apple's App Store.
 </footer>
 
-<script src="apps.js?v=10"></script>
-<script src="common.js?v=10"></script>
+<script src="apps.js?v=11"></script>
+<script src="common.js?v=11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
 (async function () {
@@ -294,8 +294,12 @@
     const list = ids(), n = list.length, size = AM.fmtSize(AM.totalSize(list));
     count.textContent = n ? `${n} app${n === 1 ? '' : 's'}${size ? ', ' + size : ''}` : '';
     barcount.textContent = n ? `${n} picked${size ? ', ' + size : ''}` : '';
-    bar.hidden = !n; empty.hidden = !!n; share.hidden = !n; clear.hidden = !n;
+    bar.hidden = !n; empty.hidden = !!n; clear.hidden = !n;
     $('#order-note').hidden = n < 2;
+    // The link + code are always there: the site itself until something is picked.
+    $('#hint').textContent = n
+      ? 'Scan on the new phone, or text it the link. The whole list is in the link; nothing is stored anywhere.'
+      : 'Pick apps and this becomes a link to your list. Scan it on the new phone, or text it over.';
     rowsEl.innerHTML = '';
     for (const id of list) {
       rowsEl.append(AM.rowEl(AM.byId.get(id), {
@@ -304,8 +308,7 @@
         onRemove: () => { selected.delete(id); boxes.get(id).cb.checked = false; update(); },
       }));
     }
-    if (!n) return;
-    const url = AM.listUrl(list);
+    const url = n ? AM.listUrl(list) : location.href.replace(/[?#].*$/, '');
     $('#url').value = url;
     const qr = $('#qr'); qr.innerHTML = '';
     if (window.qrcode) {
