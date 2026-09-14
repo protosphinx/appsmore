@@ -37,6 +37,9 @@ No build step, no backend, no accounts. The whole list is encoded in the link.
    the order on the page.
 3. `node scripts/icons.mjs` to bake the icon (needs network). If you skip this
    the site looks the icon up live from Apple and caches it in the browser.
+4. Bump the `?v=` on the `style.css` / `apps.js` / `common.js` references in
+   the three HTML files (and `icons.json` in `common.js`) whenever those files
+   change, so browsers don't keep the old copies.
 
 ## Running locally
 
