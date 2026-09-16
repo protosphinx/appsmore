@@ -35,6 +35,12 @@ so search engines can find it.
 
 ## Just shipped
 
+- Duo-first positioning (2026-09-15): h1 "The iPhone Duo apps. Hand-picked.",
+  lede "The short list for the first folding iPhone", a live Duo line under
+  it (days to the Oct 23 launch, then "tried on a Duo: N of 67" once ["duo"]
+  tags exist), first pack renamed "Duo, day one". Title, meta, OG and
+  og.png follow. Targets the still-uncontested "iphone duo apps" query.
+
 - Short links: `appsmore.com/tigereatsapple` style phrases via a Cloudflare
   Worker + KV; "Short link" button in Your list; QR switches to the short
   URL. Same list always gets the same phrase; one-year TTL refreshed on use.

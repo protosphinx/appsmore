@@ -42,7 +42,8 @@ img { display: block; }
 /* headline, one line, then icons */
 .title { font-size: 34px; line-height: 1.08; font-weight: 800; letter-spacing: -0.03em; margin: 22px 0 10px; max-width: 14ch; }
 .lede { margin: 0 0 8px; color: var(--muted); font-size: 16px; max-width: 560px; }
-.meta { margin: 0 0 22px; color: var(--muted); font-size: 13px; }
+.meta { margin: 0 0 8px; color: var(--muted); font-size: 13px; }
+.meta.duo { margin-bottom: 22px; color: #d6d6dd; max-width: 560px; }
 
 /* the icon grid */
 .cat { margin: 0 0 26px; }
