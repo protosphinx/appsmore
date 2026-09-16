@@ -1,11 +1,11 @@
 # appsmore - status
 
-**Current state (2026-09-14):** v0.8 live at https://appsmore.com (also
-www and https://appsmore.build.host), valid Let's Encrypt certificates on all
-three, HTTP redirects to HTTPS. Static site, no backend. One picker page laid
-out for the iPhone Duo's two screens, a shareable list page, an about page.
-Catalog is a first real cut: 67 obvious picks in 12 categories, chosen for
-restraint rather than coverage, and meant to be pruned by hand from here.
+**Current state (2026-09-15):** live at https://appsmore.com (also www and
+https://appsmore.build.host), proxied through Cloudflare, HTTPS everywhere.
+Static site plus one Cloudflare Worker for short links. Duo-first picker laid
+out for the iPhone Duo's two screens, a shareable list page, a setup guide,
+an about page. Catalog: 67 picks in 13 categories with a one-line "why" each,
+chosen for restraint rather than coverage, to be pruned by hand from here.
 Public launch is after the Duo ships (Oct 23, 2026); the site is online now
 so search engines can find it.
 
