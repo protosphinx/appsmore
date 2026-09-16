@@ -17,7 +17,7 @@
 <meta name="twitter:title" content="appsmore: the iPhone Duo apps, hand-picked">
 <meta name="twitter:image" content="https://appsmore.com/og.png">
 <meta name="theme-color" content="#0b0b0f">
-<link rel="stylesheet" href="style.css?v=20">
+<link rel="stylesheet" href="style.css?v=21">
 <link rel="icon" href="/favicon.ico" sizes="48x48">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-32.png" type="image/png" sizes="32x32">
@@ -45,10 +45,20 @@
 <main class="wrap">
   <div class="panes">
     <div>
-      <h1 class="title">The iPhone Duo apps. Hand-picked.</h1>
-      <p class="lede">The short list for the first folding iPhone. Tap the ones you want, install them in setup order, or send the list to the Duo as one short link.</p>
-      <p class="meta" id="catalog-note"></p>
-      <p class="meta duo" id="duo-note"></p>
+      <div class="hero">
+        <div class="hero-text">
+          <h1 class="title">The iPhone Duo apps. Hand-picked.</h1>
+          <p class="lede">The short list for the first folding iPhone. Tap the ones you want, install them in setup order, or send the list to the Duo as one short link.</p>
+          <p class="meta" id="catalog-note"></p>
+          <p class="meta duo" id="duo-note"></p>
+        </div>
+        <!-- An open iPhone Duo, drawn in CSS, showing this page on its two screens. Filled by the script below. -->
+        <div class="device" id="device" aria-hidden="true">
+          <div class="screen left"><div class="mini-grid" id="mini-grid"></div></div>
+          <div class="crease"></div>
+          <div class="screen right"><div class="mini-list" id="mini-list"></div></div>
+        </div>
+      </div>
       <div class="packs" id="packs" hidden></div>
       <section class="catalog" id="grid" aria-label="Apps by category">
         <!-- catalog:start -->
@@ -196,8 +206,8 @@
   appsmore is a personal list, not a store. Made by <a href="https://x.com/protosphinx" rel="me noopener">@protosphinx</a> on NEO. App names and icons belong to their developers; links go to Apple's App Store.
 </footer>
 
-<script src="apps.js?v=20"></script>
-<script src="common.js?v=20"></script>
+<script src="apps.js?v=21"></script>
+<script src="common.js?v=21"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js" crossorigin="anonymous"></script>
 <script>
 (async function () {
@@ -216,6 +226,15 @@
   await AM.loadIcons();
 
   $('#catalog-note').innerHTML = `${AM.ordered.length} apps, ${CATEGORIES.length} categories, every one picked by <a href="https://x.com/protosphinx" rel="me noopener">@protosphinx</a>.`;
+  // The drawn Duo in the hero: 16 icons on the left screen, 4 list rows on the right.
+  (function drawDuo() {
+    const grid = $('#mini-grid'), list = $('#mini-list');
+    const pickIds = [389801252, 310633997, 874139669, 324684580, 544007664, 585027354, 6448311069, 302584613, 1511601750, 422689480, 1064216828, 6444370199, 368677368, 351727428, 426826309, 989804926];
+    for (const id of pickIds) { const a = AM.byId.get(id); if (!a) continue; const t = document.createElement('span'); t.className = 'mini-tile'; t.append(AM.iconEl(a, 'ic', 128)); const nm = document.createElement('i'); t.append(nm); grid.append(t); }
+    const head = document.createElement('div'); head.className = 'mini-head'; head.innerHTML = '<b></b><i></i>'; list.append(head);
+    for (const id of pickIds.slice(8, 12)) { const a = AM.byId.get(id); if (!a) continue; const r = document.createElement('div'); r.className = 'mini-row'; r.append(AM.iconEl(a, 'ic', 128)); const bars = document.createElement('span'); bars.className = 'bars'; bars.innerHTML = '<i></i><i></i>'; const get = document.createElement('span'); get.className = 'mini-get'; r.append(bars, get); list.append(r); }
+  })();
+
   // The Duo line: days to launch until Oct 23 2026, then how many apps have
   // been tried on the inner screen (the ["duo"] tag in apps.js).
   (function duoNote() {

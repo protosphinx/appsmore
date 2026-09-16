@@ -35,6 +35,9 @@ so search engines can find it.
 
 ## Just shipped
 
+- Hero Duo (2026-09-15): an open iPhone Duo drawn in CSS (no Apple imagery),
+  showing this page on its two screens with real icons and a mini list;
+  full width on the phone, beside the headline on laptops.
 - Duo-first positioning (2026-09-15): h1 "The iPhone Duo apps. Hand-picked.",
   lede "The short list for the first folding iPhone", a live Duo line under
   it (days to the Oct 23 launch, then "tried on a Duo: N of 67" once ["duo"]

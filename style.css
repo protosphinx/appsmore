@@ -192,3 +192,41 @@ footer { color: var(--muted); font-size: 12px; text-align: center; padding: 28px
 .packs-inline { display: flex; flex-wrap: wrap; gap: 8px; }
 .packs-inline .pack { text-decoration: none; }
 .prose .fine { color: var(--muted); font-size: 13px; margin-top: 26px; }
+
+/* hero: text plus a drawn, open iPhone Duo showing this page on both screens */
+.hero { display: grid; grid-template-columns: 1fr; gap: 18px 36px; align-items: center; margin-bottom: 18px; }
+.hero-text .meta.duo { margin-bottom: 0; }
+.device {
+  position: relative; width: 100%; max-width: 420px; aspect-ratio: 890 / 626; margin: 4px 0 0;
+  display: grid; grid-template-columns: 1fr 3px 1fr; gap: 0;
+  padding: 9px; border-radius: 26px; background: #202027;
+  box-shadow: inset 0 0 0 1px #34343d, 0 30px 60px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.04);
+}
+.device .screen { background: var(--bg); overflow: hidden; padding: 6% 7%; }
+.device .screen.left { border-radius: 18px 3px 3px 18px; }
+.device .screen.right { border-radius: 3px 18px 18px 3px; }
+.device .crease { background: linear-gradient(90deg, rgba(0,0,0,.6), rgba(255,255,255,.06), rgba(0,0,0,.6)); }
+.mini-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10% 8%; }
+.mini-tile { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+.mini-tile .ic { width: 100%; height: auto; aspect-ratio: 1; border-radius: 22%; box-shadow: 0 0 0 0.5px rgba(255,255,255,.08); }
+.mini-tile i { display: block; width: 70%; height: 3px; border-radius: 2px; background: #3a3a44; }
+.mini-list { display: flex; flex-direction: column; gap: 7%; height: 100%; }
+.mini-head { display: flex; align-items: center; gap: 6px; margin-bottom: 2%; }
+.mini-head b { display: block; width: 34%; height: 6px; border-radius: 3px; background: #e6e6ea; }
+.mini-head i { display: block; width: 18%; height: 4px; border-radius: 2px; background: #3a3a44; }
+.mini-row { display: flex; align-items: center; gap: 6%; }
+.mini-row .ic { width: 18%; height: auto; aspect-ratio: 1; border-radius: 22%; flex: none; box-shadow: 0 0 0 0.5px rgba(255,255,255,.08); }
+.mini-row .bars { flex: 1; display: flex; flex-direction: column; gap: 3px; }
+.mini-row .bars i { display: block; height: 4px; border-radius: 2px; background: #4a4a55; }
+.mini-row .bars i:first-child { width: 55%; background: #d6d6dd; }
+.mini-row .bars i:last-child { width: 80%; }
+.mini-row .mini-get { flex: none; width: 16%; height: 9px; border-radius: 5px; background: var(--blue); }
+.mini-tile .ic.letter, .mini-row .ic.letter { font-size: 8px; }
+@media (min-width: 626px) { .device { max-width: 460px; } }
+@media (min-width: 1100px) {
+  /* side by side; the headline gets the room, the device stays a supporting image */
+  .hero { grid-template-columns: minmax(0, 1fr) 320px; gap: 24px 32px; margin-bottom: 26px; }
+  .hero .title { font-size: 42px; max-width: none; }
+  .device { max-width: 320px; justify-self: end; }
+}
+
